@@ -1,0 +1,6 @@
+server:
+### 내장 WAS 관리
+  port: 8080
+
+logs:
+  properties: true
