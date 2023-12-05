@@ -2,5 +2,32 @@ server:
 ### 내장 WAS 관리
   port: 8080
 
-logs:
-  properties: true
+jwt:
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+
+spring:
+  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/demo
+  username: localuser
+  password: '0000'
+
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
+
+  jpa:
+    hibernate.ddl-auto: create
+    show-sql: true
+
+  security:
+    user:
+      name: admin
+      password: admin
