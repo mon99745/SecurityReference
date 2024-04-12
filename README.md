@@ -2,6 +2,8 @@
 Security Reference
 
 ### Spring Security - Architecture
-![img.png](img.png)
+![](src/main/resources/static/img/SpringSecurity-Architecture.png)
+## Architecture in Project
 
-### Project - Architecture
+### JWT - Life Cycle
+![](src/main/resources/static/img/JWT-LifeCycle.png)
