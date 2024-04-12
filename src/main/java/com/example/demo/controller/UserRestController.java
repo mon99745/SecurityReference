@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.domain.TokenInfo;
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -21,19 +22,25 @@ import java.util.Optional;
 @RequestMapping(UserRestController.PATH)
 public class UserRestController {
 	public static final String PATH = "/user";
-	private final UserService userService;
 	private final UserRepository userRepository;
+	private final UserService userService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
-//	@PostMapping("login")
-//	public TokenInfo login(@RequestBody User loginMsg) {
-//		TokenInfo tokenInfo = userService.login(loginMsg.getMemberId(), loginMsg.getPassword());
-//		return tokenInfo;
-//	}
+	/**
+	 * 로그인
+	 *
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	@PostMapping("login")
+	public TokenInfo login(String username, String password) {
+		return userService.login(username, password);
+	}
 
 	/**
 	 * 회원가입
+	 *
 	 * @param createMsg
 	 * @return
 	 */
@@ -47,6 +54,7 @@ public class UserRestController {
 
 	/**
 	 * 회원조회
+	 *
 	 * @param username
 	 * @return
 	 */

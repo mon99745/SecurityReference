@@ -6,18 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserDetailService implements UserDetailsService {
 
 	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -31,8 +27,7 @@ public class UserDetailService implements UserDetailsService {
 	private UserDetails createUserDetails(User user) {
 		return User.builder()
 				.username(user.getUsername())
-//				.password(user.getPassword())
-				.password(passwordEncoder.encode(user.getPassword()))
+				.password(user.getPassword())
 				.roles(Arrays.asList(user.getRoles().toArray(new String[0])))
 				.build();
 	}
