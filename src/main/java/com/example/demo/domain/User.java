@@ -2,6 +2,7 @@ package com.example.demo.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,23 +13,34 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Member implements UserDetails {
+@Table(name = "UserInfo")
+public class User implements UserDetails {
 
+	/**
+	 * 회원 식별 번호
+	 */
 	@Id
+	@Column(nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
 	@Column(updatable = false, unique = true, nullable = false)
-	private String memberId;
+	private String username;
 
 	@Column(nullable = false)
 	private String password;
@@ -46,7 +58,7 @@ public class Member implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return memberId;
+		return username;
 	}
 
 	@Override

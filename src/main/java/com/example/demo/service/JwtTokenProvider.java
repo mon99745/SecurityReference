@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.TokenInfo;
+import com.example.demo.domain.ValidToken;
+import com.example.demo.repository.ValidTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -31,9 +33,12 @@ public class JwtTokenProvider {
 
 	private final Key key;
 
-	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+	private final ValidTokenRepository validTokenRepository;
+
+	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, ValidTokenRepository validTokenRepository) {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
+		this.validTokenRepository = validTokenRepository;
 	}
 
 	// 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
@@ -58,6 +63,11 @@ public class JwtTokenProvider {
 				.setExpiration(new Date(now + 86400000))
 				.signWith(key, SignatureAlgorithm.HS256)
 				.compact();
+
+		// 유효 토큰 저장소에 저장
+		validTokenRepository.save(ValidToken.builder()
+				.accessToken(accessToken)
+				.build());
 
 		return TokenInfo.builder()
 				.grantType("Bearer")
@@ -90,6 +100,11 @@ public class JwtTokenProvider {
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+			//TODO: 예외처리
+			if(validTokenRepository.findByAccessToken(token) == null){
+				log.info("유효 토큰이 존재하지 않습니다. Token = " + token);
+				throw new Exception(token);
+			}
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
@@ -99,6 +114,8 @@ public class JwtTokenProvider {
 			log.info("Unsupported JWT Token", e);
 		} catch (IllegalArgumentException e) {
 			log.info("JWT claims string is empty.", e);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 		return false;
 	}
