@@ -8,8 +8,10 @@ jwt:
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/h2db;AUTO_SERVER=true
-#    url: jdbc:h2:mem:testdb
+#    다중 프로세스 접근 허용 시
+#    url: jdbc:h2:file:~/h2db;AUTO_SERVER=true
+#    단일 프로세스 접근 허용 시
+    url: jdbc:h2:mem:testdb
     username: sa
     password:
   h2:
