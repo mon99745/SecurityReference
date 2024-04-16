@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Status;
 import com.example.demo.domain.TokenInfo;
 import com.example.demo.domain.ValidToken;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.ValidTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
-
-	private final UserRepository userRepository;
 	private final ValidTokenRepository validTokenRepository;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
@@ -39,9 +37,10 @@ public class UserService {
 
 	@Transactional
 	public void logout(String token) {
-		// 유효한 토큰 목록에서 해당 토큰을 제거
-		validTokenRepository.delete(ValidToken.builder()
+		// 토큰 목록에서 상태를 변경
+		validTokenRepository.save(ValidToken.builder()
 				.accessToken(token)
+				.status(Status.REVOKED)
 				.build());
 	}
 }

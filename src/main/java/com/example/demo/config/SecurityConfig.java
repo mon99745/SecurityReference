@@ -24,13 +24,16 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 				.httpBasic().disable()
-				.csrf().disable()
+				.csrf().disable() // CSRF 보안 비활성화
+				.headers().frameOptions().disable() // X-Frame-Options 비활성화
+				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authorizeRequests()
-				.antMatchers("/", "/signup").permitAll()
+				.antMatchers("/", "/signup","/error").permitAll()
 				.antMatchers("/index-test").authenticated()
 				.antMatchers("/user/**").permitAll()
+				.antMatchers("/h2-console/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
@@ -38,7 +41,7 @@ public class SecurityConfig {
 				.and()
 				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 				.logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
 				.logoutSuccessUrl("/login-page");
 
 		return http.build();

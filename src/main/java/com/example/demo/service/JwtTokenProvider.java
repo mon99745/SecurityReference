@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Status;
 import com.example.demo.domain.TokenInfo;
 import com.example.demo.domain.ValidToken;
 import com.example.demo.repository.ValidTokenRepository;
@@ -64,9 +65,10 @@ public class JwtTokenProvider {
 				.signWith(key, SignatureAlgorithm.HS256)
 				.compact();
 
-		// 유효 토큰 저장소에 저장
+		// 토큰 로그에 상태 정보 저장
 		validTokenRepository.save(ValidToken.builder()
 				.accessToken(accessToken)
+				.status(Status.VALID)
 				.build());
 
 		return TokenInfo.builder()
@@ -100,10 +102,8 @@ public class JwtTokenProvider {
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-			//TODO: 예외처리
-			if(validTokenRepository.findByAccessToken(token) == null){
-				log.info("유효 토큰이 존재하지 않습니다. Token = " + token);
-				throw new Exception(token);
+			if (!validTokenRepository.findByAccessToken(token).equals(Status.VALID)) {
+				throw new Exception("토큰 정보가 유효하지 않습니다. Token = " + token);
 			}
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
