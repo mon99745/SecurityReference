@@ -19,4 +19,5 @@ public class ValidToken {
 	private Long id;
 
 	private String accessToken;
+	private Status status;
 }
