@@ -10,6 +10,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
+/**
+ * Token - Entity for token validation
+ */
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

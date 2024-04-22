@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * User - Main elements of service
+ */
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

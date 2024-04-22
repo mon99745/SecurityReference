@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+/**
+ * User - HTTP Controller
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
