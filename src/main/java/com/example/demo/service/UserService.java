@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -36,10 +38,15 @@ public class UserService {
 	}
 
 	@Transactional
-	public void logout(String token) {
+	public void logout(HttpServletRequest request) {
+		// 엑세스 토큰 추출
+		String accessToken = request.getHeader("Authorization");
+		if (accessToken != null && accessToken.startsWith("Bearer ")) {
+			accessToken = accessToken.substring(7);
+		}
 		// 토큰 목록에서 상태를 변경
 		validTokenRepository.save(ValidToken.builder()
-				.accessToken(token)
+				.accessToken(accessToken)
 				.status(Status.REVOKED)
 				.build());
 	}

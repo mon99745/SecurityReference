@@ -3,6 +3,7 @@ package com.example.demo.config;
 
 import com.example.demo.filter.JwtAuthenticationFilter;
 import com.example.demo.service.JwtTokenProvider;
+import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,13 +13,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
+	private final UserService userService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,7 +31,7 @@ public class SecurityConfig {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authorizeRequests()
-				.antMatchers("/", "/signup","/error").permitAll()
+				.antMatchers("/", "/signup", "/error").permitAll()
 				.antMatchers("/index-test").authenticated()
 				.antMatchers("/user/**").permitAll()
 				.antMatchers("/h2-console/**").permitAll()
@@ -41,8 +42,9 @@ public class SecurityConfig {
 				.and()
 				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 				.logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-				.logoutSuccessUrl("/login-page");
+				.addLogoutHandler((httpServletRequest, httpServletResponse, authentication) -> {
+					userService.logout(httpServletRequest);
+				});
 
 		return http.build();
 	}
