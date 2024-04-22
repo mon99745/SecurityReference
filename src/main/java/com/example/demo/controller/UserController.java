@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * User - Controller for page
+ */
 @Controller
 public class UserController {
 	@GetMapping("/login-page")

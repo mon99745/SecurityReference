@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.TokenInfo;
-import com.example.demo.domain.ValidToken;
-import com.example.demo.repository.ValidTokenRepository;
+import com.example.demo.domain.Status;
+import com.example.demo.domain.Token;
+import com.example.demo.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,22 +27,25 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+/**
+ * Token - JWT Provider
+ */
 @Slf4j
 @Component
 public class JwtTokenProvider {
 
 	private final Key key;
 
-	private final ValidTokenRepository validTokenRepository;
+	private final TokenRepository tokenRepository;
 
-	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, ValidTokenRepository validTokenRepository) {
+	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, TokenRepository tokenRepository) {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
-		this.validTokenRepository = validTokenRepository;
+		this.tokenRepository = tokenRepository;
 	}
 
 	// 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-	public TokenInfo generateToken(Authentication authentication) {
+	public Token generateToken(Authentication authentication) {
 		// 권한 가져오기
 		String authorities = authentication.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
@@ -64,12 +67,13 @@ public class JwtTokenProvider {
 				.signWith(key, SignatureAlgorithm.HS256)
 				.compact();
 
-		// 유효 토큰 저장소에 저장
-		validTokenRepository.save(ValidToken.builder()
+		// 토큰 로그에 상태 정보 저장
+		tokenRepository.save(Token.ValidToken.builder()
 				.accessToken(accessToken)
+				.status(Status.VALID)
 				.build());
 
-		return TokenInfo.builder()
+		return Token.builder()
 				.grantType("Bearer")
 				.accessToken(accessToken)
 				.refreshToken(refreshToken)
@@ -100,10 +104,10 @@ public class JwtTokenProvider {
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-			//TODO: 예외처리
-			if(validTokenRepository.findByAccessToken(token) == null){
-				log.info("유효 토큰이 존재하지 않습니다. Token = " + token);
-				throw new Exception(token);
+			Token.ValidToken validToken = tokenRepository.findByAccessToken(token);
+			log.info("findByStatus : " + validToken.getStatus());
+			if (!validToken.getStatus().equals(Status.VALID)) {
+				throw new Exception("무효화된 토큰입니다. Token = " + token);
 			}
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {

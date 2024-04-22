@@ -21,7 +21,7 @@
     function redirectToIndexTest() {
         // JWT 토큰 값이 없다면 경고를 표시하고 로그인 페이지로 이동
         if (!accessToken || !refreshToken) {
-            alert("JWT 토큰이 없습니다!");
+            console.log("JWT 토큰이 존재하지 않습니다.");
             window.location.href = "/login";
             return;
         }
@@ -32,7 +32,6 @@
         xhr.open("GET", "/index-test", true);
         // JWT 토큰을 헤더에 추가
         xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-        // TODO: refreshToken 사용 목적을 재확인
         // xhr.setRequestHeader("refreshToken", "Bearer " + refreshToken);
 
         // 요청 완료 후의 처리
@@ -50,7 +49,6 @@
                 }
             }
         };
-
         // 요청 전송
         xhr.send();
     }

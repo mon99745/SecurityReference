@@ -1,3 +1,7 @@
+### 해당 프로젝트 경로 (default: ~)
+root-dir: ~
+db-file-dir: ${root-dir}/db/h2/h2db
+
 server:
 ### 내장 WAS 관리
   port: 8080
@@ -8,7 +12,9 @@ jwt:
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/h2db;AUTO_SERVER=true
+#    다중 프로세스 접근 허용 시 (File Mode)
+    url: jdbc:h2:file:${db-file-dir};AUTO_SERVER=true
+#    단일 프로세스 접근 허용 시 (In-Memory Mode)
 #    url: jdbc:h2:mem:testdb
     username: sa
     password:
