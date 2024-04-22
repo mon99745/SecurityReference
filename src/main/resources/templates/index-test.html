@@ -24,7 +24,7 @@
         var xhr = new XMLHttpRequest();
 
         // 요청 준비
-        xhr.open("POST", "/user/logout", true);
+        xhr.open("POST", "/logout", true);
         // JWT 토큰을 헤더에 추가
         xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
         // xhr.setRequestHeader("refreshToken", "Bearer " + refreshToken);
@@ -34,7 +34,7 @@
             // 로컬 스토리지에서 토큰 삭제
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            window.location.href = "/";
+            window.location.href = "/login-page";
         };
 
         // 요청 전송

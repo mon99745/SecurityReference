@@ -14,6 +14,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Token - Filter
+ */
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
