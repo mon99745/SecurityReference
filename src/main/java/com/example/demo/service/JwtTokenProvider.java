@@ -102,8 +102,10 @@ public class JwtTokenProvider {
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-			if (!validTokenRepository.findByAccessToken(token).equals(Status.VALID)) {
-				throw new Exception("토큰 정보가 유효하지 않습니다. Token = " + token);
+			ValidToken validToken = validTokenRepository.findByAccessToken(token);
+			log.info("findByStatus : "+ validToken.getStatus());
+			if (!validToken.getStatus().equals(Status.VALID)) {
+				throw new Exception("무효화된 토큰입니다. Token = " + token);
 			}
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
