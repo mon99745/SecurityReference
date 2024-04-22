@@ -1,9 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Status;
-import com.example.demo.domain.TokenInfo;
-import com.example.demo.domain.ValidToken;
-import com.example.demo.repository.ValidTokenRepository;
+import com.example.demo.domain.Token;
+import com.example.demo.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,12 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
-	private final ValidTokenRepository validTokenRepository;
+	private final TokenRepository tokenRepository;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
-
 	@Transactional
-	public TokenInfo login(String username, String password) {
+	public Token login(String username, String password) {
 		// 1. Login ID/PW 를 기반으로 Authentication 객체 생성
 		// 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
@@ -35,9 +33,9 @@ public class UserService {
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
 		// 3. 인증 정보를 기반으로 JWT 토큰 생성
-		TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+		Token token = jwtTokenProvider.generateToken(authentication);
 
-		return tokenInfo;
+		return token;
 	}
 
 	@Transactional
@@ -48,7 +46,7 @@ public class UserService {
 			accessToken = accessToken.substring(7);
 		}
 		// 토큰 목록에서 상태를 변경
-		validTokenRepository.save(ValidToken.builder()
+		tokenRepository.save(Token.ValidToken.builder()
 				.accessToken(accessToken)
 				.status(Status.REVOKED)
 				.build());

@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.TokenInfo;
+import com.example.demo.domain.Token;
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -37,7 +37,7 @@ public class UserRestController {
 	 * @return
 	 */
 	@PostMapping("login")
-	public TokenInfo login(String username, String password) {
+	public Token login(String username, String password) {
 		return userService.login(username, password);
 	}
 
