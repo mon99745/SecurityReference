@@ -35,6 +35,7 @@ public class SecurityConfig {
 				.and()
 				.authorizeRequests()
 				.antMatchers("/", "/signup", "/error").permitAll()
+				.antMatchers("/css/**", "/js/**").permitAll()
 				.antMatchers("/index-test").authenticated()
 				.antMatchers("/user/**").permitAll()
 				.antMatchers("/h2-console/**").permitAll()

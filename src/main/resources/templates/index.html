@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Index Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
-<center> Index Page</center>
-<center> 인증 테스트</center>
-<center>
-    <!-- 버튼을 클릭할 때 JavaScript 함수를 호출하여 JWT 토큰을 헤더에 포함하여 페이지 이동 -->
-    <button style="color: blue" onclick="redirectToIndexTest()">Index Test Page</button>
-</center>
-
+<div class="container">
+    <h1>Index Page</h1>
+    <center>
+    <p> 인증 테스트</p>
+        <button onclick="redirectToIndexTest()">Index Test Page</button>
+    </center>
+</div>
 <script>
     // 로컬 스토리지에서 JWT 토큰을 가져옴
     var accessToken = localStorage.getItem("accessToken");

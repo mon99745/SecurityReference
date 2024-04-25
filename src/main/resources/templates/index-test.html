@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Index Test Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
-<center> Index Test Page</center>
-<center> 인증/인가 테스트 OK</center>
-<center>
-    <button style="color: blue" onclick="location.href='/'">Index Page</button>
-    <button style="color: blue" onclick="logout()">logout</button>
-</center>
-
+<div class="container">
+    <h1>Index Test Page</h1>
+    <center>
+    <p>인증/인가 테스트 OK</p>
+        <button onclick="location.href='/'">Index Page</button>
+        <button onclick="logout()">Logout</button>
+    </center>
+</div>
 <script>
     function logout() {
         // JWT 토큰 값이 없다면 경고를 표시하고 로그인 페이지로 이동
