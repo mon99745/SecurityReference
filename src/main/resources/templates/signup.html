@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Sign Up</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script th:src="@{/js/index.js}"></script>
 </head>
 <body>
 <div class="container">
@@ -37,29 +38,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    function submitForm() {
-        var formData = {
-            username: document.getElementById("username").value,
-            password: document.getElementById("password").value,
-            roles: [document.getElementById("roles").value]
-        };
-
-        // AJAX를 사용하여 서버로 데이터 전송
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/user/create", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // 성공적으로 처리된 경우 처리할 내용
-                window.history.back();
-                console.log("회원가입이 완료되었습니다.");
-            }
-        };
-        xhr.send(JSON.stringify(formData));
-    }
-</script>
-
 </body>
 </html>

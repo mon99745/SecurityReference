@@ -4,44 +4,16 @@
     <meta charset="UTF-8">
     <title>Index Test Page</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <script th:src="@{/js/index.js}"></script>
 </head>
 <body>
 <div class="container">
     <h1>Index Test Page</h1>
     <center>
-    <p>인증/인가 테스트 OK</p>
+        <p>인증/인가 테스트 OK</p>
         <button onclick="location.href='/'">Index Page</button>
         <button onclick="logout()">Logout</button>
     </center>
 </div>
-<script>
-    function logout() {
-        // JWT 토큰 값이 없다면 경고를 표시하고 로그인 페이지로 이동
-        if (!accessToken || !refreshToken) {
-            alert("JWT 토큰이 없습니다!");
-            window.location.href = "/login";
-            return;
-        }
-
-        var xhr = new XMLHttpRequest();
-
-        // 요청 준비
-        xhr.open("POST", "/logout", true);
-        // JWT 토큰을 헤더에 추가
-        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-        // xhr.setRequestHeader("refreshToken", "Bearer " + refreshToken);
-
-        // 요청 완료 후의 처리
-        xhr.onreadystatechange = function () {
-            // 로컬 스토리지에서 토큰 삭제
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            window.location.href = "/login-page";
-        };
-
-        // 요청 전송
-        xhr.send();
-    }
-</script>
 </body>
 </html>

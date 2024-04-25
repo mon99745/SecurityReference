@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script th:src="@{/js/index.js}"></script>
 </head>
 <body>
 <div class="container text-center mt-3">
@@ -15,7 +16,7 @@
             <div class="card">
                 <div class="card-header">Login</div>
                 <div class="card-body">
-                    <form id="loginForm" th:action="@{/login}" method="post">
+                    <form id="loginForm" method="post">
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
@@ -26,7 +27,7 @@
                             <input type="password" class="form-control" id="password" name="password"
                                    placeholder="Password">
                         </div>
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="submit" class="btn btn-primary" onclick="login()">Login</button>
                         <a th:href="@{/signup}" class="btn btn-link">Sign Up</a>
                     </form>
                 </div>
@@ -34,31 +35,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById("loginForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // 기본 동작 방지
-
-        var formData = new FormData(this);
-
-        fetch("/user/login", {
-            method: "POST",
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                // 서버에서 받은 토큰을 로컬 스토리지에 저장
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("refreshToken", data.refreshToken);
-
-                // 로그인 후 페이지 이동 또는 다른 작업 수행
-                window.location.href = "/";
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                // 에러 처리 위치
-            });
-    });
-</script>
 </body>
 </html>
