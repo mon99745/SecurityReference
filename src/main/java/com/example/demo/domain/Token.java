@@ -19,7 +19,6 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 public class Token {
-
 	private String grantType;
 	private String accessToken;
 	private String refreshToken;

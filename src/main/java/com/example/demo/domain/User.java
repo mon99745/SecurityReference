@@ -3,7 +3,6 @@ package com.example.demo.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "UserInfo")
 public class User implements UserDetails {
-
 	/**
 	 * 회원 식별 번호
 	 */

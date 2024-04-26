@@ -12,10 +12,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @ControllerAdvice
 public class TokenValidationExceptionHandler {
-
-	@ExceptionHandler(value = { io.jsonwebtoken.security.SecurityException.class, MalformedJwtException.class,
-			ExpiredJwtException.class, UnsupportedJwtException.class,
-			IllegalArgumentException.class })
+	@ExceptionHandler(value = { io.jsonwebtoken.security.SecurityException.class,
+			MalformedJwtException.class, ExpiredJwtException.class,
+			UnsupportedJwtException.class, IllegalArgumentException.class })
 	public String handleTokenValidationException(Exception ex, RedirectAttributes redirectAttributes) {
 		if (ex instanceof io.jsonwebtoken.security.SecurityException || ex instanceof MalformedJwtException) {
 			redirectAttributes.addFlashAttribute("error", "invalid-token");
