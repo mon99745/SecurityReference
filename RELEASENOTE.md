@@ -15,7 +15,7 @@
   1. `(신규/중) Form, Session 기반 인증 추가 구현` - 보류
   1. `(신규/중) OAuth 2.0, OpenID Connect 추가 구현` - 보류
   1. (개선/하) HTML 내부 JS 코드 외부로 분리
-  1. (개선/하) JS Fatch API 도입 및 공통 분모 정리 - 예정
+  1. (개선/하) JS Fatch API 도입 및 공통 분모 정리
   1. (개선/하) HTML 페이지 디자인 측면 개선
   1. `(신규/중) 멀티 모듈 구성` - 보류
   1. (개선/하) 테스트 코드 추가(controller/handler/service) - 진행중
