@@ -2,26 +2,33 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
+import com.example.demo.domain.User;
 import com.example.demo.repository.TokenRepository;
+import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 /**
  * User - Main elements of service
  */
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
 	private final TokenRepository tokenRepository;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final UserRepository userRepository;
+
 	@Transactional
 	public Token login(String username, String password) {
 		// 1. Login ID/PW 를 기반으로 Authentication 객체 생성
@@ -50,5 +57,21 @@ public class UserService {
 				.accessToken(accessToken)
 				.status(Status.REVOKED)
 				.build());
+	}
+
+	@Transactional
+	public User create(User createMsg) {
+		if (userRepository.findByUsername(createMsg.getUsername()).isPresent()) {
+			throw new RuntimeException("이미 존재하는 아이디입니다.");
+		} else {
+			String hashPw = bCryptPasswordEncoder.encode(createMsg.getPassword());
+			createMsg.setPassword(hashPw);
+			userRepository.save(createMsg);
+			return createMsg;
+		}
+	}
+
+	public Optional<User> read(String username) {
+		return userRepository.findByUsername(username);
 	}
 }
