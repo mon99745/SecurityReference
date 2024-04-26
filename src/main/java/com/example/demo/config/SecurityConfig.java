@@ -3,7 +3,6 @@ package com.example.demo.config;
 
 import com.example.demo.filter.JwtAuthenticationFilter;
 import com.example.demo.service.JwtTokenProvider;
-import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +37,7 @@ public class SecurityConfig {
 						"/css/**", "/js/**", "/user/**",
 						"/h2-console/**", "/login-page")
 				.permitAll()
-				.antMatchers("/index-test").authenticated()
+				.antMatchers("/index-test-case*").authenticated()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
