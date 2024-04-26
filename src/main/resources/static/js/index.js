@@ -116,3 +116,35 @@ function submitForm() {
     };
     xhr.send(JSON.stringify(formData));
 }
+
+function withdraw() {
+    // 로컬 스토리지에서 JWT 토큰을 가져옴
+    var accessToken = localStorage.getItem("accessToken");
+    var refreshToken = localStorage.getItem("refreshToken");
+
+    // JWT 토큰 값이 없다면 경고를 표시하고 로그인 페이지로 이동
+    if (!accessToken || !refreshToken) {
+        alert("JWT 토큰이 없습니다!");
+        window.location.href = "/login";
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+
+    // 요청 준비
+    xhr.open("POST", "/user/withdraw", true);
+    // JWT 토큰을 헤더에 추가
+    xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    // xhr.setRequestHeader("refreshToken", "Bearer " + refreshToken);
+
+    // 요청 완료 후의 처리
+    xhr.onreadystatechange = function () {
+        // 로컬 스토리지에서 토큰 삭제
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login-page";
+    };
+
+    // 요청 전송
+    xhr.send();
+}

@@ -3,12 +3,12 @@ package com.example.demo.service;
 import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.domain.User;
-import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +23,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	private final TokenRepository tokenRepository;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final UserRepository userRepository;
+	private final TokenService tokenService;
 
 	@Transactional
 	public Token login(String username, String password) {
@@ -47,16 +47,8 @@ public class UserService {
 
 	@Transactional
 	public void logout(HttpServletRequest request) {
-		// 엑세스 토큰 추출
-		String accessToken = request.getHeader("Authorization");
-		if (accessToken != null && accessToken.startsWith("Bearer ")) {
-			accessToken = accessToken.substring(7);
-		}
-		// 토큰 목록에서 상태를 변경
-		tokenRepository.save(Token.ValidToken.builder()
-				.accessToken(accessToken)
-				.status(Status.REVOKED)
-				.build());
+		String accessToken = tokenService.getAccessToken(request);
+		tokenService.updateStatusToken(accessToken, Status.INVALID);
 	}
 
 	@Transactional
@@ -73,5 +65,26 @@ public class UserService {
 
 	public Optional<User> read(String username) {
 		return userRepository.findByUsername(username);
+	}
+
+	@Transactional
+	public void withdraw(HttpServletRequest request) {
+		try {
+			// getAccessToken in header
+			String accessToken = tokenService.getAccessToken(request);
+
+			// getUsername in Token
+			UserDetails userDetails = (UserDetails) jwtTokenProvider
+					.getAuthentication(accessToken)
+					.getPrincipal();
+			String username = userDetails.getUsername();
+
+			Optional<User> optionalUser = userRepository.findByUsername(username);
+			userRepository.delete(optionalUser.orElse(null));
+
+			tokenService.updateStatusToken(accessToken, Status.REVOKED);
+		} catch (Exception e) {
+			throw new RuntimeException("회원 탈퇴 중 예외가 발생하였습니다. ");
+		}
 	}
 }

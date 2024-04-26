@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.Token;
 import com.example.demo.domain.User;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,11 +42,11 @@ public class UserRestController {
 	/**
 	 * 로그아웃
 	 *
-	 * @param httpServletRequest
+	 * @param request
 	 */
 	@PostMapping("/logout")
-	public void logout(HttpServletRequest httpServletRequest) {
-		userService.logout(httpServletRequest);
+	public void logout(HttpServletRequest request) {
+		userService.logout(request);
 	}
 
 	/**
@@ -70,5 +69,15 @@ public class UserRestController {
 	@GetMapping("read/{username}")
 	public Optional<User> read(@PathVariable String username) {
 		return userService.read(username);
+	}
+
+	/**
+	 * 회원탈퇴
+	 *
+	 * @param request
+	 */
+	@PostMapping("withdraw")
+	public void withdraw(HttpServletRequest request) {
+		userService.withdraw(request);
 	}
 }
