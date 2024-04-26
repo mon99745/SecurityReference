@@ -38,7 +38,8 @@ public class JwtTokenProvider {
 
 	private final TokenRepository tokenRepository;
 
-	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, TokenRepository tokenRepository) {
+	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
+							TokenRepository tokenRepository) {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 		this.tokenRepository = tokenRepository;
@@ -80,7 +81,7 @@ public class JwtTokenProvider {
 				.build();
 	}
 
-	// JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
+	// JWT 토큰을 복호화하여 토큰의 권한 정보 추출 메서드
 	public Authentication getAuthentication(String accessToken) {
 		// 토큰 복호화
 		Claims claims = parseClaims(accessToken);
@@ -105,9 +106,8 @@ public class JwtTokenProvider {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			Token.ValidToken validToken = tokenRepository.findByAccessToken(token);
-			log.info("findByStatus : " + validToken.getStatus());
 			if (!validToken.getStatus().equals(Status.VALID)) {
-				throw new Exception("무효화된 토큰입니다. Token = " + token);
+				throw new Exception("사용 불가능한 토큰입니다. Token = " + token);
 			}
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
@@ -126,7 +126,9 @@ public class JwtTokenProvider {
 
 	private Claims parseClaims(String accessToken) {
 		try {
-			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+			return Jwts.parserBuilder()
+					.setSigningKey(key).build()
+					.parseClaimsJws(accessToken).getBody();
 		} catch (ExpiredJwtException e) {
 			return e.getClaims();
 		}

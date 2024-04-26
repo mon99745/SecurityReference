@@ -3,7 +3,6 @@ package com.example.demo.config;
 
 import com.example.demo.filter.JwtAuthenticationFilter;
 import com.example.demo.service.JwtTokenProvider;
-import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
-	private final UserService userService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,21 +32,19 @@ public class SecurityConfig {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authorizeRequests()
-				.antMatchers("/", "/signup", "/error").permitAll()
-				.antMatchers("/css/**", "/js/**").permitAll()
-				.antMatchers("/index-test").authenticated()
-				.antMatchers("/user/**").permitAll()
-				.antMatchers("/h2-console/**").permitAll()
+				.antMatchers(
+						"/", "/signup", "/error",
+						"/css/**", "/js/**", "/user/**",
+						"/h2-console/**", "/login-page")
+				.permitAll()
+				.antMatchers("/index-test-case*").authenticated()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
-				.loginPage("/login-page").permitAll()
+				.loginPage("/login-page")
 				.and()
-				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-				.logout()
-				.addLogoutHandler((httpServletRequest, httpServletResponse, authentication) -> {
-					userService.logout(httpServletRequest);
-				});
+				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+						UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

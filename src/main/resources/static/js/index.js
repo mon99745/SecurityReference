@@ -1,5 +1,4 @@
-// 페이지 이동 함수
-function redirectToIndexTest() {
+function getToken() {
     // 로컬 스토리지에서 JWT 토큰을 가져옴
     var accessToken = localStorage.getItem("accessToken");
     var refreshToken = localStorage.getItem("refreshToken");
@@ -9,33 +8,42 @@ function redirectToIndexTest() {
         console.log("JWT 토큰이 존재하지 않습니다.");
         window.location.href = "/login";
         return;
+    } else {
+        return {
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        };
     }
+}
 
-    var xhr = new XMLHttpRequest();
+function goPage(url) {
+    var tokens = getToken();
 
-    // 요청 준비
-    xhr.open("GET", "/index-test", true);
-    // JWT 토큰을 헤더에 추가
-    xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-    // xhr.setRequestHeader("refreshToken", "Bearer " + refreshToken);
+    var accessToken = tokens.accessToken;
+    var refreshToken = tokens.refreshToken;
 
-    // 요청 완료 후의 처리
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                console.log(xhr.responseText);
-                // 서버로부터 받은 HTML 응답을 이용하여 페이지 이동
-                document.open();
-                document.write(xhr.responseText);
-                document.close();
-            } else {
-                // 에러 처리
-                console.error("Error:", xhr.statusText);
-            }
+    fetch(url, {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+            // "refreshToken": "Bearer " + refreshToken
         }
-    };
-    // 요청 전송
-    xhr.send();
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // 성공적인 응답을 텍스트로 반환
+            }
+            throw new Error("Network response was not ok.");
+        })
+        .then(html => {
+            // 서버로부터 받은 HTML 응답을 이용하여 페이지 이동
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
 }
 
 function login() {
@@ -50,50 +58,43 @@ function login() {
         })
             .then(response => response.json())
             .then(data => {
-                // 서버에서 받은 토큰을 로컬 스토리지에 저장
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("refreshToken", data.refreshToken);
 
-                // 로그인 후 페이지 이동 또는 다른 작업 수행
                 window.location.href = "/";
             })
             .catch(error => {
                 console.error("Error:", error);
-                // 에러 처리 위치
             });
     });
 }
 
 function logout() {
-    // 로컬 스토리지에서 JWT 토큰을 가져옴
-    var accessToken = localStorage.getItem("accessToken");
-    var refreshToken = localStorage.getItem("refreshToken");
+    var tokens = getToken();
 
-    // JWT 토큰 값이 없다면 경고를 표시하고 로그인 페이지로 이동
-    if (!accessToken || !refreshToken) {
-        alert("JWT 토큰이 없습니다!");
-        window.location.href = "/login";
-        return;
-    }
+    var accessToken = tokens.accessToken;
+    var refreshToken = tokens.refreshToken;
 
-    var xhr = new XMLHttpRequest();
-
-    // 요청 준비
-    xhr.open("POST", "/logout", true);
-    // JWT 토큰을 헤더에 추가
-    xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-    // xhr.setRequestHeader("refreshToken", "Bearer " + refreshToken);
-
-    // 요청 완료 후의 처리
-    xhr.onreadystatechange = function () {
-        // 로컬 스토리지에서 토큰 삭제
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login-page";
-    };
-
-    // 요청 전송
-    xhr.send();
+    fetch("/user/logout", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+            // "refreshToken": "Bearer " + refreshToken
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                window.location.href = "/login-page";
+            } else {
+                throw new Error("Network response was not ok.");
+            }
+        })
+        .catch(error => {
+            // 에러 처리
+            console.error("Error:", error);
+        });
 }
 
 function submitForm() {
@@ -103,16 +104,51 @@ function submitForm() {
         roles: [document.getElementById("roles").value]
     };
 
-    // AJAX를 사용하여 서버로 데이터 전송
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/user/create", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            // 성공적으로 처리된 경우 처리할 내용
-            window.history.back();
-            console.log("회원가입이 완료되었습니다.");
+    fetch("/user/create", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+    })
+        .then(response => {
+            if (response.ok) {
+                window.history.back();
+                console.log("회원가입이 완료되었습니다.");
+            } else {
+                throw new Error("Network response was not ok.");
+            }
+        })
+        .catch(error => {
+            // 에러 처리
+            console.error("Error:", error);
+        });
+}
+
+function withdraw() {
+    var tokens = getToken();
+
+    var accessToken = tokens.accessToken;
+    var refreshToken = tokens.refreshToken;
+
+    fetch("/user/withdraw", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+            // "refreshToken": "Bearer " + refreshToken
         }
-    };
-    xhr.send(JSON.stringify(formData));
+    })
+        .then(response => {
+            if (response.ok) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                window.location.href = "/login-page";
+            } else {
+                throw new Error("Network response was not ok.");
+            }
+        })
+        .catch(error => {
+            // 에러 처리
+            console.error("Error:", error);
+        });
 }
