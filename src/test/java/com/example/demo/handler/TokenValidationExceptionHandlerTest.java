@@ -1,6 +1,5 @@
-package handler;
+package com.example.demo.handler;
 
-import com.example.demo.handler.TokenValidationExceptionHandler;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import org.junit.jupiter.api.Test;
