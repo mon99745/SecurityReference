@@ -1,0 +1,12 @@
+### 토큰 관리
+jwt:
+  secret: TestyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+
+### Spring 관리
+spring:
+  datasource:
+    url: jdbc:h2:file:./db/h2/test/h2db;AUTO_SERVER=true
+
+  ### JPA 관리
+  jpa:
+    hibernate.ddl-auto: create
