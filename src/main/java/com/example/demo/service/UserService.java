@@ -67,7 +67,11 @@ public class UserService {
 	}
 
 	public Optional<User> read(String username) {
-		return userRepository.findByUsername(username);
+		Optional<User> user = userRepository.findByUsername(username);
+		if (!user.isPresent()) {
+			throw new RuntimeException("해당 회원의 정보가 없습니다. ID: " + username);
+		}
+		return user;
 	}
 
 	@Transactional
@@ -82,8 +86,8 @@ public class UserService {
 					.getPrincipal();
 			String username = userDetails.getUsername();
 
-			Optional<User> optionalUser = userRepository.findByUsername(username);
-			userRepository.delete(optionalUser.orElse(null));
+			Optional<User> user = userRepository.findByUsername(username);
+			userRepository.delete(user.orElse(null));
 
 			tokenService.updateStatusToken(accessToken, Status.REVOKED);
 		} catch (Exception e) {
