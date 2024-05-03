@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.repository.TokenRepository;
+import com.example.demo.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;

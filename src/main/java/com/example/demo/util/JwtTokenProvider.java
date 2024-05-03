@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.util;
 
 import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
