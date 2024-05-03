@@ -5,7 +5,11 @@ server:
 
 ### 토큰 관리
 jwt:
+  ## 개인 키
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+  ## 토큰 유효 시간
+  access-token-valid-time: 3600000 # (defalut: 1시간)
+  refresh-token-valid-time: 86400000 # (defalut: 24시간)
 
 ### Spring 관리
 spring:

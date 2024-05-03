@@ -33,9 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtTokenProvider {
-
 	private final Key key;
-
 	private final TokenRepository tokenRepository;
 
 	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
@@ -46,7 +44,12 @@ public class JwtTokenProvider {
 	}
 
 	// 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-	public Token generateToken(Authentication authentication) {
+	public Token generateToken(Authentication authentication,
+							   String accessTokenValidTime, String refreshTokenValidTime) {
+		if (accessTokenValidTime.isEmpty() || refreshTokenValidTime.isEmpty()) {
+			throw new RuntimeException("토큰의 유효시간 설정이 잘못되었습니다. " +
+					"accessTokenExpTime: " + accessTokenValidTime + "refreshTokenExpTime: " + refreshTokenValidTime);
+		}
 		// 권한 가져오기
 		String authorities = authentication.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
@@ -54,7 +57,7 @@ public class JwtTokenProvider {
 
 		long now = (new Date()).getTime();
 		// Access Token 생성
-		Date accessTokenExpiresIn = new Date(now + 86400000);
+		Date accessTokenExpiresIn = new Date(now + Integer.parseInt(accessTokenValidTime));
 		String accessToken = Jwts.builder()
 				.setSubject(authentication.getName())
 				.claim("auth", authorities)
@@ -63,8 +66,9 @@ public class JwtTokenProvider {
 				.compact();
 
 		// Refresh Token 생성
+		Date refreshTokenExpiresIn = new Date(now + Integer.parseInt(refreshTokenValidTime));
 		String refreshToken = Jwts.builder()
-				.setExpiration(new Date(now + 86400000))
+				.setExpiration(refreshTokenExpiresIn)
 				.signWith(key, SignatureAlgorithm.HS256)
 				.compact();
 

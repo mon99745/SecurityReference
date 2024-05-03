@@ -49,6 +49,12 @@ class JwtTokenProviderTest {
 	@Value("${jwt.secret}")
 	private String secretKey;
 
+	@Value("${jwt.access-token-valid-time}")
+	private String accessTokenValidTime;
+
+	@Value("${jwt.refresh-token-valid-time}")
+	private String refreshTokenValidTime;
+
 	@BeforeEach
 	public void setUp() {
 		jwtTokenProvider = new JwtTokenProvider(secretKey, tokenRepository);
@@ -67,7 +73,8 @@ class JwtTokenProviderTest {
 		when(authentication.getAuthorities()).thenAnswer(invocation -> authorities);
 
 		// 실행
-		Token token = jwtTokenProvider.generateToken(authentication);
+		Token token = jwtTokenProvider.generateToken(authentication,
+				accessTokenValidTime, refreshTokenValidTime);
 		accessToken = token.getAccessToken();
 
 		// 검증
