@@ -25,8 +25,8 @@ function goPage(url) {
     fetch(url, {
         method: "GET",
         headers: {
-            "Authorization": "Bearer " + accessToken
-            // "refreshToken": "Bearer " + refreshToken
+            "Authorization": "Bearer " + accessToken,
+            "X-Refresh-Token": "Bearer " + refreshToken
         }
     })
         .then(response => {

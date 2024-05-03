@@ -43,6 +43,8 @@ import static org.mockito.Mockito.when;
 class JwtTokenProviderTest {
 
 	@Mock
+	private TokenService tokenService;
+	@Mock
 	private TokenRepository tokenRepository;
 	private JwtTokenProvider jwtTokenProvider;
 	private static String accessToken;
@@ -57,7 +59,7 @@ class JwtTokenProviderTest {
 
 	@BeforeEach
 	public void setUp() {
-		jwtTokenProvider = new JwtTokenProvider(secretKey, tokenRepository);
+		jwtTokenProvider = new JwtTokenProvider(secretKey, tokenService, tokenRepository);
 	}
 
 	@Test // 토큰을 생성
@@ -73,8 +75,7 @@ class JwtTokenProviderTest {
 		when(authentication.getAuthorities()).thenAnswer(invocation -> authorities);
 
 		// 실행
-		Token token = jwtTokenProvider.generateToken(authentication,
-				accessTokenValidTime, refreshTokenValidTime);
+		Token token = jwtTokenProvider.generateToken(authentication);
 		accessToken = token.getAccessToken();
 
 		// 검증
@@ -138,14 +139,18 @@ class JwtTokenProviderTest {
 	//	@Test
 	public void testValidateToken_ValidToken() {
 		// 준비
-		String accessToken = "validAccessToken";
+		Token token = Token.builder()
+				.accessToken("ValidAccessToken")
+				.refreshToken("ValidRefreshToken")
+				.build();
+
 		when(tokenRepository.findByAccessToken(accessToken))
 				.thenReturn(Token.ValidToken.builder()
 						.status(Status.VALID)
 						.build());
 
 		// 실행
-		boolean isValid = jwtTokenProvider.validateToken(accessToken);
+		boolean isValid = jwtTokenProvider.validateToken(token);
 
 		// 검증
 		assertTrue(isValid);
@@ -154,14 +159,18 @@ class JwtTokenProviderTest {
 	@Test
 	public void testValidateToken_InvalidToken() {
 		// 준비
-		String accessToken = "invalidAccessToken";
+		Token token = Token.builder()
+				.accessToken("invalidAccessToken")
+				.refreshToken("invalidRefreshToken")
+				.build();
+
 		when(tokenRepository.findByAccessToken(accessToken))
 				.thenReturn(Token.ValidToken.builder()
 						.status(Status.INVALID)
 						.build());
 
 		// 실행
-		boolean isValid = jwtTokenProvider.validateToken(accessToken);
+		boolean isValid = jwtTokenProvider.validateToken(token);
 
 		// 검증
 		assertFalse(isValid);

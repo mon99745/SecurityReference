@@ -6,11 +6,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import java.util.Date;
 
 /**
  * Token - DTO & Entity
@@ -33,7 +36,10 @@ public class Token {
 	public static class ValidToken {
 
 		@Id
+		private Long id;
 		private String accessToken;
+		private String refreshToken;
+		private Date expireDate;
 
 		@Enumerated(EnumType.STRING)
 		private Status status;
