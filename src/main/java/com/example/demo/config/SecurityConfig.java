@@ -34,7 +34,7 @@ public class SecurityConfig {
 				.authorizeRequests()
 				.antMatchers(
 						"/", "/signup", "/error",
-						"/css/**", "/js/**", "/user/**",
+						"/css/**", "/js/**", "/user/**", "/test/**",
 						"/h2-console/**", "/login-page")
 				.permitAll()
 				.antMatchers("/index-test-case*").authenticated()

@@ -1,11 +1,13 @@
 # SecurityReference
 Security Reference
+#### [Release Note](RELEASENOTE.md)
 
 ### Spring Security - Architecture
-![](src/main/resources/static/img/SpringSecurity-Architecture.png)
+![](src/main/resources/static/img/SpringSecurityArchitecture.png)
 ## Architecture in Project
 
 ### Spring Security - Process
-![SpringSecurity-Process.png](src%2Fmain%2Fresources%2Fstatic%2Fimg%2FSpringSecurity-Process.png)
+![](src/main/resources/static/img/SpringSecurityProcess.png)
 ### JWT - Life Cycle
-![JWT-LifeCycle.png](src%2Fmain%2Fresources%2Fstatic%2Fimg%2FJWT-LifeCycle.png)
+![](src/main/resources/static/img/JwtLifeCycle.png)
+
