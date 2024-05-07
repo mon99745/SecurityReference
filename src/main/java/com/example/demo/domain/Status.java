@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 상태
+ * Status - Enum
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
