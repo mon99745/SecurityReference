@@ -85,8 +85,8 @@ function logout() {
     fetch("/user/logout", {
         method: "POST",
         headers: {
-            "Authorization": "Bearer " + accessToken
-            // "refreshToken": "Bearer " + refreshToken
+            "Authorization": "Bearer " + accessToken,
+            "X-Refresh-Token": "Bearer " + refreshToken
         }
     })
         .then(response => {
@@ -141,8 +141,8 @@ function withdraw() {
     fetch("/user/withdraw", {
         method: "POST",
         headers: {
-            "Authorization": "Bearer " + accessToken
-            // "refreshToken": "Bearer " + refreshToken
+            "Authorization": "Bearer " + accessToken,
+            "X-Refresh-Token": "Bearer " + refreshToken
         }
     })
         .then(response => {

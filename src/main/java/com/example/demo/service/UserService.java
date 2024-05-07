@@ -52,8 +52,8 @@ public class UserService {
 
 	@Transactional
 	public void logout(HttpServletRequest request) {
-		String accessToken = tokenService.getAccessToken(request);
-		tokenService.updateStatusToken(accessToken, Status.INVALID);
+		Token token = tokenService.getToken(request);
+		tokenService.updateStatusToken(token, Status.INVALID);
 	}
 
 	@Transactional
@@ -79,19 +79,19 @@ public class UserService {
 	@Transactional
 	public void withdraw(HttpServletRequest request) {
 		try {
-			// getAccessToken in header
-			String accessToken = tokenService.getAccessToken(request);
+			// getToken in header
+			Token token = tokenService.getToken(request);
 
 			// getUsername in Token
 			UserDetails userDetails = (UserDetails) jwtTokenProvider
-					.getAuthentication(accessToken)
+					.getAuthentication(token.getAccessToken())
 					.getPrincipal();
 
 			String username = userDetails.getUsername();
 			Optional<User> user = userRepository.findByUsername(username);
 			userRepository.delete(user.orElse(null));
 
-			tokenService.updateStatusToken(accessToken, Status.REVOKED);
+			tokenService.updateStatusToken(token, Status.REVOKED);
 		} catch (Exception e) {
 			throw new RuntimeException("회원 탈퇴 중 예외가 발생하였습니다. ");
 		}

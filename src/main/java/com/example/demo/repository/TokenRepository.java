@@ -10,6 +10,6 @@ import java.util.Optional;
  */
 public interface TokenRepository
 		extends JpaRepository<Token.ValidToken, Long> {
-	Token.ValidToken findByAccessToken(String accessToken);
+	Optional<Token.ValidToken> findByAccessToken(String accessToken);
 	Optional<Token.ValidToken> findByRefreshToken(String refreshToken);
 }
