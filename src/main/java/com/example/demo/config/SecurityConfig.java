@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 
 import com.example.demo.filter.JwtAuthenticationFilter;
+import com.example.demo.service.TokenService;
 import com.example.demo.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
+	private final TokenService tokenService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -43,7 +45,7 @@ public class SecurityConfig {
 				.formLogin()
 				.loginPage("/login-page")
 				.and()
-				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenService),
 						UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

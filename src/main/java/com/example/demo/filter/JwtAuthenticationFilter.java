@@ -1,6 +1,7 @@
 package com.example.demo.filter;
 
 import com.example.demo.domain.Token;
+import com.example.demo.service.TokenService;
 import com.example.demo.util.JwtTokenProvider;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Token - Filter
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
 	private final JwtTokenProvider jwtTokenProvider;
+	private final TokenService tokenService;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -29,18 +32,41 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
 		// 1. Request Header 에서 JWT 토큰 추출
 		Token token = resolveToken((HttpServletRequest) request);
+		String accessToken = token.getAccessToken();
+		String refreshToken = token.getRefreshToken();
 
-		// 2. validateToken 으로 토큰 유효성 검사
-		if (token != null && jwtTokenProvider.validateToken(token)) {
-			// 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
-			Authentication authentication = jwtTokenProvider.getAuthentication(token.getAccessToken());
-			SecurityContextHolder
-					.getContext()
-					.setAuthentication(authentication);
+		// 2. Token 유효성 검사
+		if (accessToken != null) {
+			// 2-1 Access Token 검사
+			if (jwtTokenProvider.validateToken(accessToken)) {
+				setAuthenticationInContext(accessToken);
+			} else if (refreshToken != null && tokenService.existsRefreshToken(refreshToken)) {
+				if (jwtTokenProvider.validateToken(refreshToken));
+				// Access Token 재발급
+				Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+				String newAccessToken = jwtTokenProvider.regenerateToken(authentication, token.getRefreshToken())
+						.getAccessToken();
+
+				// Header 에 Access Token 추가해서 반환
+				jwtTokenProvider.setHeaderAccessToken((HttpServletResponse) response, newAccessToken);
+
+				// SecurityContext 에 저장
+				this.setAuthenticationInContext(newAccessToken);
+			} else {
+				throw new RuntimeException("토큰 정보가 정확하지 않습니다 Access Token :" + accessToken
+						+ "Refresh Token: " + refreshToken );
+			}
 		}
 		chain.doFilter(request, response);
 	}
 
+	private void setAuthenticationInContext(String accessToken) {
+		//토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
+		Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+		SecurityContextHolder
+				.getContext()
+				.setAuthentication(authentication);
+	}
 	// Request Header 에서 토큰 정보 추출
 	private Token resolveToken(HttpServletRequest request) {
 		String accessToken = null;
