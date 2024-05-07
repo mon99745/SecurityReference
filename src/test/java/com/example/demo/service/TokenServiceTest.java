@@ -25,65 +25,81 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("test")
 class TokenServiceTest {
 
-	@Mock
-	private HttpServletRequest request;
-	@Mock
-	private TokenRepository tokenRepository;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private TokenRepository tokenRepository;
 
-	@InjectMocks
-	private TokenService tokenService;
+    @InjectMocks
+    private TokenService tokenService;
 
-	@Test
-	public void testGetAccessToken_WithValidAuthorizationHeader() {
-		// 준비
-		String authorizationHeader = "Bearer testAccessToken";
-		when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
+    @Test
+    public void testGetAccessToken_WithValidAuthorizationHeader() {
+        // 준비
+        String testAccessToken = "Bearer testAccessToken";
+        String testRefreshToken = "Bearer testRefreshToken";
 
-		// 실행
-		String accessToken = tokenService.getAccessToken(request);
+        when(request.getHeader("Authorization")).thenReturn(testAccessToken);
+        when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
 
-		// 검증
-		assertEquals("testAccessToken", accessToken);
-	}
+        // 실행
+        Token token = tokenService.getToken(request);
 
-	//	@Test
-	public void testGetAccessToken_WithInvalidAuthorizationHeader() {
-		// 준비
-		String authorizationHeader = "invalidFormat testAccessToken";
-		when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
+        // 검증
+        assertEquals("testAccessToken", token.getAccessToken());
+        assertEquals("testRefreshToken", token.getRefreshToken());
 
-		// 실행
-		String accessToken = tokenService.getAccessToken(request);
+    }
 
-		// 검증
-		assertNull(accessToken);
-	}
+    @Test
+    public void testGetAccessToken_WithInvalidAuthorizationHeader() {
+        // 준비
+        String testAccessToken = "invalidFormat testAccessToken";
+        String testRefreshToken = "invalidFormat testRefreshToken";
 
-	@Test
-	public void testGetAccessToken_WithoutAuthorizationHeader() {
-		// 준비
-		when(request.getHeader("Authorization")).thenReturn(null);
+        when(request.getHeader("Authorization")).thenReturn(testAccessToken);
+        when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
 
-		// 실행
-		String accessToken = tokenService.getAccessToken(request);
+        // 실행
+        Token token = tokenService.getToken(request);
 
-		// 검증
-		assertNull(accessToken);
-	}
+        // 검증
+        assertEquals("invalidFormat testAccessToken", token.getAccessToken());
+        assertEquals("invalidFormat testRefreshToken", token.getRefreshToken());
+    }
 
-	//	@Test
-	public void testUpdateStatusToken() {
-		// 준비
-		String accessToken = "testAccessToken";
-		Status status = Status.INVALID;
+    @Test
+    public void testGetAccessToken_WithoutAuthorizationHeader() {
+        // 준비
+        when(request.getHeader("Authorization")).thenReturn(null);
+        when(request.getHeader("X-Refresh-Token")).thenReturn(null);
 
-		// 실행
-		tokenService.updateStatusToken(accessToken, status);
+        // 실행
+        Token token = tokenService.getToken(request);
 
-		// 검증
-		verify(tokenRepository).save(Token.ValidToken.builder()
-				.accessToken(accessToken)
-				.status(status)
-				.build());
-	}
+        // 검증
+        assertNull(token.getAccessToken());
+        assertNull(token.getRefreshToken());
+    }
+
+    //	@Test
+    public void testUpdateStatusToken() {
+        // 준비
+        Token token = Token.builder()
+                .accessToken("ValidAccessToken")
+                .refreshToken("ValidRefreshToken")
+                .build();
+
+        Status status = Status.INVALID;
+
+        // 실행
+        tokenService.updateStatusToken(token, status);
+
+        // 검증
+        verify(tokenRepository).save(Token.ValidToken.builder()
+                .accessToken("ValidAccessToken")
+                .refreshToken("ValidRefreshToken")
+                .status(status)
+                .build());
+    }
 }
