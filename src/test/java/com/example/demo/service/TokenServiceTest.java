@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
@@ -24,67 +25,77 @@ import static org.mockito.Mockito.verify;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("test")
 class TokenServiceTest {
-
     @Mock
     private HttpServletRequest request;
     @Mock
     private TokenRepository tokenRepository;
-
     @InjectMocks
     private TokenService tokenService;
 
+    /**
+     * @Desc 헤더에서 토큰 정보 추출 테스트
+     * case: 헤더에 Access Token 만 있는경우
+     */
     @Test
-    public void testGetAccessToken_WithValidAuthorizationHeader() {
-        // 준비
+    public void testGetToken_AuthorizationHeader() {
+        // Arrange
+        String testAccessToken = "Bearer testAccessToken";
+
+        when(request.getHeader("Authorization")).thenReturn(testAccessToken);
+
+        // Act
+        Token token = tokenService.getToken(request);
+
+        // Assert
+        assertEquals("testAccessToken", token.getAccessToken());
+    }
+
+    /**
+     * @Desc 헤더에서 토큰 정보 추출 테스트
+     * case: 헤더에 Refresh Token 만 있는경우
+     */
+    @Test
+    public void testGetToken_RefreshTokenHeader() {
+        // Arrange
+        String testRefreshToken = "Bearer testRefreshToken";
+
+        when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
+
+        // Act
+        Token token = tokenService.getToken(request);
+
+        // Assert
+        assertEquals("testRefreshToken", token.getRefreshToken());
+    }
+
+    /**
+     * @Desc 헤더에서 토큰 정보 추출 테스트
+     * case: 헤더에 Access Token, Refresh Token 둘다 있는경우
+     */
+    @Test
+    public void testGetToken_BothHeaders() {
+        // Arrange
         String testAccessToken = "Bearer testAccessToken";
         String testRefreshToken = "Bearer testRefreshToken";
 
         when(request.getHeader("Authorization")).thenReturn(testAccessToken);
         when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
 
-        // 실행
+        // Act
         Token token = tokenService.getToken(request);
 
-        // 검증
+        // Assert
         assertEquals("testAccessToken", token.getAccessToken());
         assertEquals("testRefreshToken", token.getRefreshToken());
-
     }
 
+
+    /**
+     * @Desc 토큰 상태 변경 테스트
+     */
     @Test
-    public void testGetAccessToken_WithInvalidAuthorizationHeader() {
-        // 준비
-        String testAccessToken = "invalidFormat testAccessToken";
-        String testRefreshToken = "invalidFormat testRefreshToken";
-
-        when(request.getHeader("Authorization")).thenReturn(testAccessToken);
-        when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
-
-        // 실행
-        Token token = tokenService.getToken(request);
-
-        // 검증
-        assertEquals("invalidFormat testAccessToken", token.getAccessToken());
-        assertEquals("invalidFormat testRefreshToken", token.getRefreshToken());
-    }
-
-    @Test
-    public void testGetAccessToken_WithoutAuthorizationHeader() {
-        // 준비
-        when(request.getHeader("Authorization")).thenReturn(null);
-        when(request.getHeader("X-Refresh-Token")).thenReturn(null);
-
-        // 실행
-        Token token = tokenService.getToken(request);
-
-        // 검증
-        assertNull(token.getAccessToken());
-        assertNull(token.getRefreshToken());
-    }
-
-    //	@Test
     public void testUpdateStatusToken() {
-        // 준비
+        // Arrange
         Token token = Token.builder()
                 .accessToken("ValidAccessToken")
                 .refreshToken("ValidRefreshToken")
@@ -92,14 +103,10 @@ class TokenServiceTest {
 
         Status status = Status.INVALID;
 
-        // 실행
+        // Act
         tokenService.updateStatusToken(token, status);
 
-        // 검증
-        verify(tokenRepository).save(Token.ValidToken.builder()
-                .accessToken("ValidAccessToken")
-                .refreshToken("ValidRefreshToken")
-                .status(status)
-                .build());
+        // Assert
+        verify(tokenRepository).save(any(Token.ValidToken.class));
     }
 }

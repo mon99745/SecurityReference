@@ -12,6 +12,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import static org.mockito.Mockito.verify;
 
+/**
+ * Token 검증 시 예외 핸들러 테스트
+ * 예상 예외발생 시 리다이렉션이 되는지
+ */
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class TokenValidationExceptionHandlerTest {

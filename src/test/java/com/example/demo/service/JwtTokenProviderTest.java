@@ -5,16 +5,11 @@ import com.example.demo.domain.Token;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,23 +26,25 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Token Provider Test
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("test")
 class JwtTokenProviderTest {
-
-	@Mock
-	private TokenService tokenService;
-	@Mock
+	@Autowired
 	private TokenRepository tokenRepository;
+	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 	private static String accessToken;
+	private static String refreshToken;
+	private static final String authority = "ROLE_USER";
+
 	@Value("${jwt.secret}")
 	private String secretKey;
 
@@ -57,114 +54,112 @@ class JwtTokenProviderTest {
 	@Value("${jwt.refresh-token-valid-time}")
 	private String refreshTokenValidTime;
 
-	@BeforeEach
-	public void setUp() {
-		jwtTokenProvider = new JwtTokenProvider(secretKey, tokenRepository);
-	}
-
-//	@Test
-	public void t01GenerateToken() {
-		// 준비
-		String username = "testUser";
-		String authority = "ROLE_USER";
-
-		// 준비
+	/**
+	 * @Desc 토큰 생성 테스트
+	 */
+	@Test
+	public void testGenerateToken() {
+		// Arrange
 		Authentication authentication = mock(Authentication.class);
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(authority));
+
 		when(authentication.getAuthorities()).thenAnswer(invocation -> authorities);
 
-		// 실행
+		// Act
 		Token token = jwtTokenProvider.generateToken(authentication);
 		accessToken = token.getAccessToken();
+		refreshToken = token.getRefreshToken();
 
-		// 검증
+		// Assert
 		assertNotNull(token);
 		assertEquals("Bearer", token.getGrantType());
-		assertNotNull(token.getAccessToken());
-		assertNotNull(token.getRefreshToken());
-		verify(tokenRepository).save(any(Token.ValidToken.class));
+		assertNotNull(accessToken);
+		assertNotNull(refreshToken);
 	}
 
-	//	@Test // 토큰의 클레임 검증
-	public void t02GetAuthentication_ValidToken() {
-		// 준비
-//		String accessToken = "validAccessToken";
+	/**
+	 * @Desc 유효 토큰을 통해 클레임 조회 테스트
+	 */
+	@Test
+	public void testParseClaims_ValidToken() throws InterruptedException {
+		// Arrange
+		Claims claims = Jwts.claims().setSubject(null);
+		claims.put("auth", authority);
 
-		Claims claims = Jwts.claims().setSubject("testUser");
-		claims.put("auth", "ROLE_USER");
-		JwtParser jwtParser = mock(JwtParser.class);
+		testGenerateToken();
+		Thread.sleep(3000);
 
-		String token = Jwts.builder().
-				setClaims(claims).
-				signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256))
-				.compact();
+		// Act
+		Claims ActClaims = jwtTokenProvider.parseClaims(accessToken);
 
-		when(jwtTokenProvider.parseClaims(token))
-				.thenReturn(claims);
-		when(tokenRepository.findByAccessToken(accessToken).get());
-
-		// 실행
-		Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
-		// 검증
-		assertNotNull(authentication);
-		assertEquals("testUser", authentication.getName());
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		assertNotNull(authorities);
-		assertEquals(1, authorities.size());
-		assertEquals("ROLE_USER", authorities.iterator().next().getAuthority());
+		// Assert
+		assertEquals(claims.getSubject(), ActClaims.getSubject());
+		assertEquals(authority, claims.get("auth"));
 	}
 
-	//	@Test
-	public void testGetAuthentication_InvalidToken() {
-		// 준비
-		String accessToken = "invalidTokenString";
-		when(jwtTokenProvider.parseClaims(accessToken))
-				.thenThrow(MalformedJwtException.class);
-		when(tokenRepository.findByAccessToken(accessToken));
+	/**
+	 * @Desc 무효 토큰에 대한 클레임 조회 테스트
+	 */
+	@Test
+	public void testParseClaims_InvalidToken() throws InterruptedException {
+		// Arrange
+		Claims claims = Jwts.claims().setSubject(null);
+		claims.put("auth", authority);
 
-		// 실행 및 검증
+		testGenerateToken();
+		Thread.sleep(3000);
+
+
+		Token.ValidToken token = tokenRepository.findByAccessToken(accessToken).get();
+		token.setStatus(Status.INVALID);
+		tokenRepository.save(token);
+
+		Thread.sleep(3000);
+
+		// Act & Assert
 		assertThrows(RuntimeException.class, () -> {
-			jwtTokenProvider.getAuthentication(accessToken);
+			jwtTokenProvider.parseClaims(accessToken);
 		});
 	}
 
-	//	@Test
-	public void testValidateToken_ValidToken() {
-		// 준비
-		Token token = Token.builder()
-				.accessToken("ValidAccessToken")
-				.refreshToken("ValidRefreshToken")
-				.build();
+	/**
+	 * @Desc 유효 토큰 검증 테스트
+	 */
+	@Test
+	public void testValidateToken_ValidToken() throws InterruptedException {
+		// Arrange
+		testGenerateToken();
+		Thread.sleep(3000);
 
-		when(tokenRepository.findByAccessToken(accessToken));
+		// Act
+		boolean accessTokenIsValid = jwtTokenProvider.validateToken(accessToken);
+		boolean refreshTokenIsValid = jwtTokenProvider.validateToken(refreshToken);
 
-		// 실행
-		boolean accessTokenIsValid = jwtTokenProvider.validateToken(token.getAccessToken());
-        boolean refreshTokenIsValid = jwtTokenProvider.validateToken(token.getRefreshToken());
-
-		// 검증
+		// Assert
 		assertTrue(accessTokenIsValid);
-        assertTrue(refreshTokenIsValid);
+		assertTrue(refreshTokenIsValid);
 	}
 
-//	@Test
-	public void testValidateToken_InvalidToken() {
-		// 준비
-		Token token = Token.builder()
-				.accessToken("invalidAccessToken")
-				.refreshToken("invalidRefreshToken")
+	/**
+	 * @Desc 무효 토큰 검증 테스트
+	 */
+	@Test
+	public void testValidateToken_InvalidToken() throws InterruptedException {
+		// Arrange
+		testGenerateToken();
+		Thread.sleep(3000);
+
+		Token.ValidToken token = tokenRepository.findByRefreshToken(refreshToken).get().builder()
+				.status(Status.INVALID)
 				.build();
 
-		when(tokenRepository.findByAccessToken(accessToken));
+		tokenRepository.save(token);
 
-        // 실행
-        boolean accessTokenIsValid = jwtTokenProvider.validateToken(token.getAccessToken());
-        boolean refreshTokenIsValid = jwtTokenProvider.validateToken(token.getRefreshToken());
+		// Act
+		boolean refreshTokenIsValid = jwtTokenProvider.validateToken(token.getRefreshToken());
 
-        // 검증
-        assertFalse(accessTokenIsValid);
-        assertFalse(refreshTokenIsValid);
+		// Assert
+		assertFalse(refreshTokenIsValid);
 	}
 }

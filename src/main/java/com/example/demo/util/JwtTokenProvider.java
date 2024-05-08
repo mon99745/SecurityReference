@@ -11,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,23 +35,19 @@ import java.util.stream.Collectors;
  * Token - JWT Provider
  */
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-	private final Key key;
 	private final TokenRepository tokenRepository;
 
 	@Value("${jwt.access-token-valid-time}")
-	private String accessTokenValidTime;
+	public String accessTokenValidTime;
 
 	@Value("${jwt.refresh-token-valid-time}")
 	private String refreshTokenValidTime;
 
-	public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
-							TokenRepository tokenRepository) {
-		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-		this.key = Keys.hmacShaKeyFor(keyBytes);
-		this.tokenRepository = tokenRepository;
-	}
+	@Value("${jwt.secret}")
+	private String secretKey;
 
 	// 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
 	public Token generateToken(Authentication authentication) {
@@ -66,7 +63,7 @@ public class JwtTokenProvider {
 				.setSubject(authentication.getName())
 				.claim("auth", authorities)
 				.setExpiration(accessTokenExpiresIn)
-				.signWith(key, SignatureAlgorithm.HS256)
+				.signWith(encrypt(secretKey), SignatureAlgorithm.HS256)
 				.compact();
 
 		// Refresh Token 생성
@@ -75,7 +72,7 @@ public class JwtTokenProvider {
 				.setSubject(authentication.getName())
 				.claim("auth", authorities)
 				.setExpiration(refreshTokenExpiresIn)
-				.signWith(key, SignatureAlgorithm.HS256)
+				.signWith(encrypt(secretKey), SignatureAlgorithm.HS256)
 				.compact();
 
 
@@ -106,7 +103,7 @@ public class JwtTokenProvider {
 				.setSubject(authentication.getName())
 				.claim("auth", authorities)
 				.setExpiration(accessTokenExpiresIn)
-				.signWith(key, SignatureAlgorithm.HS256)
+				.signWith(encrypt(secretKey), SignatureAlgorithm.HS256)
 				.compact();
 
 		// 토큰 정보에 Token 저장 및 상태 정보 저장
@@ -147,12 +144,13 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(encrypt(secretKey))
                     .build().parseClaimsJws(token);
-            Token.ValidToken tokenObject = tokenRepository.findByAccessToken(token).orElseGet(()
-                    -> tokenRepository.findByRefreshToken(token).get());
+            Token.ValidToken tokenObject = tokenRepository.findByAccessToken(token)
+					.orElseGet(() -> tokenRepository.findByRefreshToken(token)
+					.orElseThrow(() -> new RuntimeException("Token not found")));
             if (!tokenObject.getStatus().equals(Status.VALID)) {
-                throw new Exception("사용 불가능한 토큰입니다. Token = " + token);
+                throw new RuntimeException("사용 불가능한 토큰입니다. Token = " + token);
             }
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
@@ -171,12 +169,22 @@ public class JwtTokenProvider {
 
 	public Claims parseClaims(String accessToken) {
 		try {
+			Token.ValidToken token = tokenRepository.findByAccessToken(accessToken)
+					.orElseThrow(() -> new RuntimeException("Token not found"));
+			if (!token.getStatus().equals(Status.VALID)) {
+				throw new RuntimeException("사용 불가능한 토큰입니다. Token = " + token);
+			}
 			return Jwts.parserBuilder()
-					.setSigningKey(key).build()
+					.setSigningKey(encrypt(secretKey)).build()
 					.parseClaimsJws(accessToken).getBody();
 		} catch (ExpiredJwtException e) {
 			return e.getClaims();
 		}
+	}
+
+	public Key encrypt(String secretKey) {
+		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
 	public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {

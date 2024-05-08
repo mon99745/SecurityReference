@@ -50,7 +50,7 @@ public class UserService {
 		return token;
 	}
 
-	@Transactional
+//	@Transactional
 	public void logout(HttpServletRequest request) {
 		Token token = tokenService.getToken(request);
 		tokenService.updateStatusToken(token, Status.INVALID);

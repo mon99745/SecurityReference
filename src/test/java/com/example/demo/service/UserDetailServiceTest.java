@@ -36,30 +36,36 @@ class UserDetailServiceTest {
 	private static final String password = "test_1234";
 	private static final List<String> roles = Arrays.asList("ROLE_USER");
 
+	/**
+	 * @Desc 회원 상세 정보 검색 테스트
+	 */
 	@Test
 	public void testLoadUserByUsername_UserFound() {
-		// 준비
-
+		// Arrange
 		User user = new User(1L, username, password, roles);
 		when(userRepository.findByUsername(username))
 				.thenReturn(Optional.of(user));
 
-		// 실행
+		// Act
 		UserDetails userDetails = userDetailService.loadUserByUsername(username);
 
-		// 검증
+		// Assert
 		assertNotNull(userDetails);
 		assertEquals(username, userDetails.getUsername());
 	}
 
+	/**
+	 * @Desc 회원 상세 정보 검색 테스트
+	 * case: 존재하지 않는 회원일 경우
+	 */
 	@Test
 	public void testLoadUserByUsername_UserNotFound() {
-		// 준비
+		// Arrange
 		String username = "nonExistingUser";
 		when(userRepository.findByUsername(username))
 				.thenReturn(Optional.empty());
 
-		// 실행 및 검증
+		// Act & Assert
 		assertThrows(UsernameNotFoundException.class, () -> {
 			userDetailService.loadUserByUsername(username);
 		});
