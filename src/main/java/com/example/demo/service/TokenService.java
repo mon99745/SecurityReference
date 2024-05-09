@@ -4,12 +4,14 @@ import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenService {
@@ -46,12 +48,17 @@ public class TokenService {
      * @param status
      * @return
      */
-    public void updateStatusToken(Token token, Status status) {
-        tokenRepository.save(Token.ValidToken.builder()
-                .accessToken(token.getAccessToken())
-                .refreshToken(token.getRefreshToken())
-                .status(status)
-                .build());
+    public boolean updateStatusToken(Token token, Status status) {
+        try {
+			tokenRepository.save(Token.ValidToken.builder()
+					.accessToken(token.getAccessToken())
+					.refreshToken(token.getRefreshToken())
+					.status(status)
+					.build());
+		} catch (RuntimeException e) {
+			log.info("토큰 상태 변경 중 문제가 발생하였습니다. "+ e);
+		}
+		return true;
     }
 
     /**

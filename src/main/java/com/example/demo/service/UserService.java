@@ -50,10 +50,11 @@ public class UserService {
 		return token;
 	}
 
-//	@Transactional
-	public void logout(HttpServletRequest request) {
+	@Transactional
+	public boolean logout(HttpServletRequest request) {
 		Token token = tokenService.getToken(request);
-		tokenService.updateStatusToken(token, Status.INVALID);
+		boolean result = tokenService.updateStatusToken(token, Status.INVALID);
+		return result;
 	}
 
 	@Transactional
@@ -77,7 +78,8 @@ public class UserService {
 	}
 
 	@Transactional
-	public void withdraw(HttpServletRequest request) {
+	public boolean withdraw(HttpServletRequest request) {
+		boolean result = false;
 		try {
 			// getToken in header
 			Token token = tokenService.getToken(request);
@@ -91,9 +93,10 @@ public class UserService {
 			Optional<User> user = userRepository.findByUsername(username);
 			userRepository.delete(user.orElse(null));
 
-			tokenService.updateStatusToken(token, Status.REVOKED);
+			result = tokenService.updateStatusToken(token, Status.REVOKED);
 		} catch (Exception e) {
 			throw new RuntimeException("회원 탈퇴 중 예외가 발생하였습니다. ");
 		}
+		return result;
 	}
 }
