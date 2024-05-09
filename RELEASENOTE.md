@@ -24,7 +24,8 @@
   1. `(신규/중) 멀티 모듈 구성` - 보류
   1. (개선/하) 테스트 코드용 DB 생성
   1. (개선/하) 테스트 코드 추가(controller/handler/service)
-  1. (개선/중) 테스트 코드 개선(controller/service) - 보류
+  1. (개선/중) 테스트 코드 개선(controller/service)
+     > @DisplayName - Target Naming, Thread.sleep 및 세분화 작업
   1. (개선/하) 예외 처리 추가  
      > 1. 회원 중복 가입 > [msg: 이미 존재하는 아이디입니다.]
      > 2. ID/PASSWORD 오기입 > [msg: 해당하는 유저를 찾을 수 없습니다.]
@@ -43,7 +44,7 @@
     > ~~CommonReference-1.0.0 - Fork~~
   1. (개선/하) JWT-LifeCycle.png 최신화
   1. (개선/하) 토큰의 유효시간을 프로퍼티로 관리하도록 수정
-  1. (개선/중) `RefreshToken`토큰 활용 - **진행중**
+  1. (개선/중) `RefreshToken`토큰 활용
     > 사용자의 인증은 access 토큰으로 하되, access 토큰의 만료시간이 끝나면 refresh 토큰으로 다시 access토큰을 생성하도록 수정
 
 ## v1.0.0 (2024-01-30 ~)
