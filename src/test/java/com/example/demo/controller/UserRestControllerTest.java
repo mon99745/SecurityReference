@@ -13,6 +13,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Transactional
 @ActiveProfiles("test")
 class UserRestControllerTest {
 	@Autowired
@@ -65,6 +67,7 @@ class UserRestControllerTest {
 	 */
 	@Test
 	void t02read() throws Exception {
+		t01create();
 		mvc.perform(get(PATH + "/read/{username}", username)
 						.session(SESSION)
 						.contentType(MediaType.APPLICATION_JSON))
@@ -78,6 +81,7 @@ class UserRestControllerTest {
 	 */
 	@Test
 	void t03login() throws Exception {
+		t01create();
 		mvc.perform(post(PATH + "/login")
 						.session(SESSION)
 						.contentType(MediaType.APPLICATION_JSON)
@@ -96,6 +100,7 @@ class UserRestControllerTest {
 	 */
 	@Test
 	void t04logout() throws Exception {
+		t03login();
 		mvc.perform(post(PATH + "/logout")
 						.session(SESSION)
 						.header("Authorization", fMap.get("grantType") + " " + fMap.get("accessToken"),

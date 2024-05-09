@@ -1,24 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.domain.User;
-import com.example.demo.repository.TokenRepository;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.util.JwtTokenProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,43 +19,50 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Transactional
 @ActiveProfiles("test")
 class UserServiceTest {
 	@Mock
-	private JwtTokenProvider jwtTokenProvider;
-	@Mock
 	private HttpServletRequest request;
-	@Mock
-	private UserRepository userRepository;
-	@Mock
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	@Mock
-	private TokenService tokenService;
-	@Mock
-	private TokenRepository tokenRepository;
 	@Autowired
 	private UserService userService;
-
+	private static User createdUser = null;
+	private static Token token = null;
 	private static final String username = "test_user";
 	private static final String password = "test_1234";
 	private static final List<String> roles = Arrays.asList("ROLE_USER");
+	private static String testAccessToken = "Bearer testAccessToken";
+	private static String testRefreshToken = "Bearer testRefreshToken";
 
-	@BeforeEach
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+	/**
+	 * @Desc 로그인 테스트
+	 */
+	@Test
+	public void testLogin() {
+		// Arrange
+		testCreate();
+
+		// Act
+		token = userService.login(username,password);
+		testAccessToken = token.getAccessToken();
+		testRefreshToken = token.getRefreshToken();
+
+		// Assert
+		assertNotNull(token);
+		assertNotNull(token.getGrantType());
+		assertNotNull(testAccessToken);
+		assertNotNull(testRefreshToken);
+
 	}
+
 	/**
 	 * @Desc 로그아웃 테스트
 	 * @throws InterruptedException
@@ -73,96 +70,85 @@ class UserServiceTest {
 	@Test
 	public void testLogout() throws InterruptedException {
 		// Arrange
-		String testAccessToken = "Bearer testAccessToken";
-		String testRefreshToken = "Bearer testRefreshToken";
+		testLogin();
 
 		when(request.getHeader("Authorization")).thenReturn(testAccessToken);
 		when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
 
 		// Act
-		userService.logout(request);
+		boolean result = userService.logout(request);
 		Thread.sleep(3000);
 
 		// Assert
-//		verify(tokenService).updateStatusToken(any(Token.class), eq(Status.INVALID));
+		assertEquals(result, true);
 	}
+
+
 
 	/**
 	 * @Desc 회원 가입 테스트
-	 * case : 이미 회원 정보가 존재하지 않는 경우
 	 */
 	@Test
-	public void testCreate_WhenUserDoesNotExist() {
-		// 준비
-		User createUser =
-				new User(1L, username, password, roles);
-		when(userRepository.findByUsername(createUser.getUsername()))
-				.thenReturn(Optional.empty());
-		when(bCryptPasswordEncoder.encode(createUser.getPassword()))
-				.thenReturn("hashedPassword");
+	public void testCreate() {
+		// Arrange
+		User createMsg = User.builder()
+				.username(username)
+				.password(password)
+				.roles(roles)
+				.build();
 
-		// 실행
-		User createdUser = userService.create(createUser);
+		// Act
+		createdUser = userService.create(createMsg);
 
-		// 검증
-		assertEquals(createUser.getUsername(), createdUser.getUsername());
-		assertEquals("hashedPassword", createdUser.getPassword());
-		verify(userRepository).save(createUser);
+		// Assert
+		assertNotNull(createdUser);
+		assertEquals(createMsg.getUsername(), createdUser.getUsername());
+		assertEquals(createMsg.getPassword(), createdUser.getPassword());
+		assertEquals(createMsg.getRoles(), createdUser.getRoles());
 	}
 
 	/**
 	 * @Desc 회원 가입 테스트
-	 * case : 이미 회원 정보가 존재하는 경우
+	 * Exceptin-Case : 이미 회원 정보가 존재하는 경우
 	 */
 	@Test
 	public void testCreate_WhenUserExists() {
-		// 준비
-		User existingUser =
-				new User(1L, "existing_User", "existing_Password", roles);
-		when(userRepository.findByUsername(existingUser.getUsername()))
-				.thenReturn(Optional.of(existingUser));
+		// Arrange
+		User createMsg = User.builder()
+				.username(username)
+				.password(password)
+				.roles(roles)
+				.build();
 
-		// 실행 및 검증
-		assertThrows(RuntimeException.class, () -> {
-			userService.create(existingUser);
-		});
+		userService.create(createMsg);
+
+		// Act & Assert
+		assertThrows(RuntimeException.class, () -> userService.create(createMsg));
 	}
 
 	/**
 	 * @Desc 회원 조회 테스트
-	 * case : 회원 정보가 존재할 경우
 	 */
 	@Test
-	public void testRead_WhenUserExists() {
-		// 준비
-		String username = "existingUser";
-		User existingUser = new User(1L, username, "existing_Password", roles);
-		when(userRepository.findByUsername(username))
-				.thenReturn(Optional.of(existingUser));
+	public void testRead() {
+		// Arrange
+		testCreate();
 
-		// 실행
-		Optional<User> user = userService.read(username);
+		// Act
+		Optional<User> readUser = userService.read(username);
 
-		// 검증
-		assertTrue(user.isPresent());
-		assertEquals(existingUser, user.get());
+		//Assert
+		assertTrue(createdUser.equals(readUser.get()));
 	}
 
 	/**
 	 * @Desc 회원 조회 테스트
-	 * case : 회원 정보가 존재하지 않는 경우
+	 * Exceptin-Case : 회원 정보가 존재하지 않는 경우
 	 */
 	@Test
 	public void testRead_WhenUserDoesNotExist() {
-		// 준비
-		String username = "nonExistingUser";
-		when(userRepository.findByUsername(username))
-				.thenReturn(Optional.empty());
-
-		// 실행 및 검증
-		assertThrows(RuntimeException.class, () -> {
-			userService.read(username);
-		});
+		//Act $ Assert
+		assertThrows(RuntimeException.class, () -> userService.read(username));
 	}
 
 	/**
@@ -170,31 +156,16 @@ class UserServiceTest {
 	 */
 	@Test
 	public void testWithdraw() {
-		// 준비
-		Token token = Token.builder()
-				.accessToken("ValidAccessToken")
-				.refreshToken("ValidRefreshToken")
-				.build();
+		// Arrange
+		testLogin();
 
-		UserDetails userDetails = mock(UserDetails.class);
-		User user = new User(1L, username, password, roles);
-		Optional<User> optionalUser = Optional.of(user);
+		when(request.getHeader("Authorization")).thenReturn(testAccessToken);
+		when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
 
-		when(tokenService.getToken(any(HttpServletRequest.class)))
-				.thenReturn(token);
-		when(jwtTokenProvider.getAuthentication(token.getAccessToken()))
-				.thenReturn(mock(Authentication.class));
-		when(jwtTokenProvider.getAuthentication(token.getAccessToken()).getPrincipal())
-				.thenReturn(userDetails);
-		when(userDetails.getUsername()).thenReturn(username);
-		when(userRepository.findByUsername(username))
-				.thenReturn(optionalUser);
+		// Act
+		boolean result = userService.withdraw(request);
 
-		// 실행
-		userService.withdraw(mock(HttpServletRequest.class));
-
-		// 검증
-		verify(userRepository).delete(user);
-		verify(tokenService).updateStatusToken(token, Status.REVOKED);
+		// Assert
+		assertEquals(result, true);
 	}
 }
