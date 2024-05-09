@@ -25,12 +25,19 @@ function goPage(url) {
     fetch(url, {
         method: "GET",
         headers: {
-            "Authorization": "Bearer " + accessToken
-            // "refreshToken": "Bearer " + refreshToken
+            "Authorization": "Bearer " + accessToken,
+            "X-Refresh-Token": "Bearer " + refreshToken
         }
     })
         .then(response => {
             if (response.ok) {
+                // 헤더에서 accessToken 추출
+                const accessToken = response.headers.get('authorization');
+
+                // 만약 accessToken이 존재한다면 로컬 스토리지에 저장
+                if (accessToken) {
+                    localStorage.setItem('accessToken', accessToken.split(' ')[1]);
+                }
                 return response.text(); // 성공적인 응답을 텍스트로 반환
             }
             throw new Error("Network response was not ok.");
@@ -78,8 +85,8 @@ function logout() {
     fetch("/user/logout", {
         method: "POST",
         headers: {
-            "Authorization": "Bearer " + accessToken
-            // "refreshToken": "Bearer " + refreshToken
+            "Authorization": "Bearer " + accessToken,
+            "X-Refresh-Token": "Bearer " + refreshToken
         }
     })
         .then(response => {
@@ -134,8 +141,8 @@ function withdraw() {
     fetch("/user/withdraw", {
         method: "POST",
         headers: {
-            "Authorization": "Bearer " + accessToken
-            // "refreshToken": "Bearer " + refreshToken
+            "Authorization": "Bearer " + accessToken,
+            "X-Refresh-Token": "Bearer " + refreshToken
         }
     })
         .then(response => {

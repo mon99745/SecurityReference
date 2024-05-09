@@ -43,10 +43,11 @@ public class UserRestController {
 	 * 로그아웃
 	 *
 	 * @param request
+	 * @return
 	 */
 	@PostMapping("/logout")
-	public void logout(HttpServletRequest request) {
-		userService.logout(request);
+	public boolean logout(HttpServletRequest request) {
+		return userService.logout(request);
 	}
 
 	/**
@@ -71,13 +72,14 @@ public class UserRestController {
 		return userService.read(username);
 	}
 
+
 	/**
 	 * 회원탈퇴
-	 *
 	 * @param request
+	 * @return
 	 */
 	@PostMapping("withdraw")
-	public void withdraw(HttpServletRequest request) {
-		userService.withdraw(request);
+	public boolean withdraw(HttpServletRequest request) {
+		return userService.withdraw(request);
 	}
 }

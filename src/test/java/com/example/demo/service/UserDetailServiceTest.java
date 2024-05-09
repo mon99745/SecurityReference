@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,46 +22,46 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@DisplayName("회원 상세 서비스 테스트")
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Transactional
 @ActiveProfiles("test")
 class UserDetailServiceTest {
-
 	@Mock
 	private UserRepository userRepository;
-
 	@InjectMocks
 	private UserDetailService userDetailService;
-
 	private static final String username = "test_user";
 	private static final String password = "test_1234";
 	private static final List<String> roles = Arrays.asList("ROLE_USER");
 
 	@Test
+	@DisplayName("회원 상세 정보 검색 테스트")
 	public void testLoadUserByUsername_UserFound() {
-		// 준비
-
+		// Arrange
 		User user = new User(1L, username, password, roles);
 		when(userRepository.findByUsername(username))
 				.thenReturn(Optional.of(user));
 
-		// 실행
+		// Act
 		UserDetails userDetails = userDetailService.loadUserByUsername(username);
 
-		// 검증
+		// Assert
 		assertNotNull(userDetails);
 		assertEquals(username, userDetails.getUsername());
 	}
 
 	@Test
+	@DisplayName("회원 상세 정보 검색 테스트_예외")
 	public void testLoadUserByUsername_UserNotFound() {
-		// 준비
+		// Arrange
 		String username = "nonExistingUser";
 		when(userRepository.findByUsername(username))
 				.thenReturn(Optional.empty());
 
-		// 실행 및 검증
+		// Act & Assert
 		assertThrows(UsernameNotFoundException.class, () -> {
 			userDetailService.loadUserByUsername(username);
 		});

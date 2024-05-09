@@ -7,7 +7,7 @@ server:
 jwt:
 #  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
 #  토큰 유효 시간
-#  access-token-valid-time: 3600000 # (defalut: 1시간)
+#  access-token-valid-time: 300000 # (defalut: 5분)
 #  refresh-token-valid-time: 86400000 # (defalut: 24시간)
 
 ### Spring 관리
@@ -28,5 +28,5 @@ spring:
 
 ### JPA 관리
   jpa:
-#    hibernate.ddl-auto: update
+    hibernate.ddl-auto: update
 #    show-sql: true
