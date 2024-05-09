@@ -1,6 +1,6 @@
 package com.example.demo.filter;
 
-import com.example.demo.service.JwtTokenProvider;
+import com.example.demo.util.JwtTokenProvider;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

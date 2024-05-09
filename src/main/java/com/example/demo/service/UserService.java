@@ -4,7 +4,9 @@ import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,12 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final TokenService tokenService;
 
+	@Value("${jwt.access-token-valid-time}")
+	private String accessTokenValidTime;
+
+	@Value("${jwt.refresh-token-valid-time}")
+	private String refreshTokenValidTime;
+
 	@Transactional
 	public Token login(String username, String password) {
 		// 1. Login ID/PW 를 기반으로 Authentication 객체 생성
@@ -43,7 +51,7 @@ public class UserService {
 				.authenticate(authenticationToken);
 
 		// 3. 인증 정보를 기반으로 JWT 토큰 생성
-		Token token = jwtTokenProvider.generateToken(authentication);
+		Token token = jwtTokenProvider.generateToken(authentication, accessTokenValidTime, refreshTokenValidTime);
 
 		return token;
 	}
@@ -84,8 +92,8 @@ public class UserService {
 			UserDetails userDetails = (UserDetails) jwtTokenProvider
 					.getAuthentication(accessToken)
 					.getPrincipal();
-			String username = userDetails.getUsername();
 
+			String username = userDetails.getUsername();
 			Optional<User> user = userRepository.findByUsername(username);
 			userRepository.delete(user.orElse(null));
 

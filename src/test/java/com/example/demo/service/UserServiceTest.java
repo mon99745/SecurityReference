@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Status;
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.util.JwtTokenProvider;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
