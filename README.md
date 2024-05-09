@@ -1,13 +1,11 @@
 # SecurityReference
-Security Reference
-#### [Release Note](RELEASENOTE.md)
+## Release
+- [V1.0.0](https://github.com/mon99745/SecurityReference/blob/dev/RELEASENOTE.md#v100-2024-01-30-)
 
-### Spring Security - Architecture
-![](src/main/resources/static/img/SpringSecurityArchitecture.png)
 ## Architecture in Project
-
 ### Spring Security - Process
 ![](src/main/resources/static/img/SpringSecurityProcess.png)
 ### JWT - Life Cycle
 ![](src/main/resources/static/img/JwtLifeCycle.png)
-
+### Spring Security - Architecture
+![](src/main/resources/static/img/SpringSecurityArchitecture.png)
