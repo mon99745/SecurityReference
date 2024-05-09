@@ -17,7 +17,6 @@ import java.util.Optional;
 public class TokenService {
     private final TokenRepository tokenRepository;
 
-
 	/**
 	 * getToken in header
 	 *

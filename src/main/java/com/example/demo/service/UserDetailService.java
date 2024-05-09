@@ -17,7 +17,6 @@ import java.util.Arrays;
 @Slf4j
 @RequiredArgsConstructor
 public class UserDetailService implements UserDetailsService {
-
 	private final UserRepository userRepository;
 
 	@Override

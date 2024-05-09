@@ -16,8 +16,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import java.util.Date;
-
 /**
  * Token - DTO & Entity
  */
@@ -25,8 +23,19 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class Token {
+	/**
+	 * 토큰 타입
+	 */
 	private String grantType;
+
+	/**
+	 * 인증 토큰
+	 */
 	private String accessToken;
+
+	/**
+	 * 재발급 토큰
+	 */
 	private String refreshToken;
 
 
@@ -38,14 +47,27 @@ public class Token {
 	@Builder
 	@Table(name = "ValidToken")
 	public static class ValidToken {
-
+		/**
+		 * 토큰 식별 번호
+		 */
 		@Id
 		@Column(nullable = false)
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
 		private Long id;
+
+		/**
+		 * 인증 토큰
+		 */
 		private String accessToken;
+
+		/**
+		 * 재발급 토큰
+		 */
 		private String refreshToken;
 
+		/**
+		 * 토큰 상태 정보
+		 */
 		@Enumerated(EnumType.STRING)
 		private Status status;
 	}
