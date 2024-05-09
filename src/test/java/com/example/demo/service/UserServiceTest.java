@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Token;
 import com.example.demo.domain.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -24,12 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+@DisplayName("회원 서비스 테스트")
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Transactional
 @ActiveProfiles("test")
 class UserServiceTest {
+	public static final String target = "Service";
 	@Mock
 	private HttpServletRequest request;
 	@Autowired
@@ -42,16 +45,14 @@ class UserServiceTest {
 	private static String testAccessToken = "Bearer testAccessToken";
 	private static String testRefreshToken = "Bearer testRefreshToken";
 
-	/**
-	 * @Desc 로그인 테스트
-	 */
 	@Test
+	@DisplayName("[" + target + "] 로그인 테스트")
 	public void testLogin() {
 		// Arrange
 		testCreate();
 
 		// Act
-		token = userService.login(username,password);
+		token = userService.login(username, password);
 		testAccessToken = token.getAccessToken();
 		testRefreshToken = token.getRefreshToken();
 
@@ -63,11 +64,8 @@ class UserServiceTest {
 
 	}
 
-	/**
-	 * @Desc 로그아웃 테스트
-	 * @throws InterruptedException
-	 */
 	@Test
+	@DisplayName("[" + target + "] 로그아웃 테스트")
 	public void testLogout() throws InterruptedException {
 		// Arrange
 		testLogin();
@@ -83,12 +81,8 @@ class UserServiceTest {
 		assertEquals(result, true);
 	}
 
-
-
-	/**
-	 * @Desc 회원 가입 테스트
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 가입 테스트")
 	public void testCreate() {
 		// Arrange
 		User createMsg = User.builder()
@@ -107,11 +101,8 @@ class UserServiceTest {
 		assertEquals(createMsg.getRoles(), createdUser.getRoles());
 	}
 
-	/**
-	 * @Desc 회원 가입 테스트
-	 * Exceptin-Case : 이미 회원 정보가 존재하는 경우
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 가입 테스트_예외")
 	public void testCreate_WhenUserExists() {
 		// Arrange
 		User createMsg = User.builder()
@@ -126,10 +117,8 @@ class UserServiceTest {
 		assertThrows(RuntimeException.class, () -> userService.create(createMsg));
 	}
 
-	/**
-	 * @Desc 회원 조회 테스트
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 조회 테스트")
 	public void testRead() {
 		// Arrange
 		testCreate();
@@ -141,20 +130,15 @@ class UserServiceTest {
 		assertTrue(createdUser.equals(readUser.get()));
 	}
 
-	/**
-	 * @Desc 회원 조회 테스트
-	 * Exceptin-Case : 회원 정보가 존재하지 않는 경우
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 조회 테스트_예외")
 	public void testRead_WhenUserDoesNotExist() {
 		//Act $ Assert
 		assertThrows(RuntimeException.class, () -> userService.read(username));
 	}
 
-	/**
-	 * @Desc 회원 탈퇴 테스트
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 탈퇴 테스트")
 	public void testWithdraw() {
 		// Arrange
 		testLogin();

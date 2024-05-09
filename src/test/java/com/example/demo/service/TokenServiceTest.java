@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.repository.TokenRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -20,94 +21,83 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
+@DisplayName("토큰 서비스 테스트")
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Transactional
 @ActiveProfiles("test")
 class TokenServiceTest {
-    @Mock
-    private HttpServletRequest request;
-    @Mock
-    private TokenRepository tokenRepository;
-    @InjectMocks
-    private TokenService tokenService;
+	@Mock
+	private HttpServletRequest request;
+	@Mock
+	private TokenRepository tokenRepository;
+	@InjectMocks
+	private TokenService tokenService;
 
-    /**
-     * @Desc 헤더에서 토큰 정보 추출 테스트
-     * case: 헤더에 Access Token 만 있는경우
-     */
-    @Test
-    public void testGetToken_AuthorizationHeader() {
-        // Arrange
-        String testAccessToken = "Bearer testAccessToken";
+	@Test
+	@DisplayName("헤더에서 토큰 정보 추출 테스트 [Access Token]")
+	public void testGetToken_AuthorizationHeader() {
+		// Arrange
+		String testAccessToken = "Bearer testAccessToken";
 
-        when(request.getHeader("Authorization")).thenReturn(testAccessToken);
+		when(request.getHeader("Authorization")).thenReturn(testAccessToken);
 
-        // Act
-        Token token = tokenService.getToken(request);
+		// Act
+		Token token = tokenService.getToken(request);
 
-        // Assert
-        assertEquals("testAccessToken", token.getAccessToken());
-    }
+		// Assert
+		assertEquals("testAccessToken", token.getAccessToken());
+	}
 
-    /**
-     * @Desc 헤더에서 토큰 정보 추출 테스트
-     * case: 헤더에 Refresh Token 만 있는경우
-     */
-    @Test
-    public void testGetToken_RefreshTokenHeader() {
-        // Arrange
-        String testRefreshToken = "Bearer testRefreshToken";
+	@Test
+	@DisplayName("헤더에서 토큰 정보 추출 테스트 [Refresh Token]")
+	public void testGetToken_RefreshTokenHeader() {
+		// Arrange
+		String testRefreshToken = "Bearer testRefreshToken";
 
-        when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
+		when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
 
-        // Act
-        Token token = tokenService.getToken(request);
+		// Act
+		Token token = tokenService.getToken(request);
 
-        // Assert
-        assertEquals("testRefreshToken", token.getRefreshToken());
-    }
+		// Assert
+		assertEquals("testRefreshToken", token.getRefreshToken());
+	}
 
-    /**
-     * @Desc 헤더에서 토큰 정보 추출 테스트
-     * case: 헤더에 Access Token, Refresh Token 둘다 있는경우
-     */
-    @Test
-    public void testGetToken_BothHeaders() {
-        // Arrange
-        String testAccessToken = "Bearer testAccessToken";
-        String testRefreshToken = "Bearer testRefreshToken";
+	@Test
+	@DisplayName("헤더에서 토큰 정보 추출 테스트 [Tokens]")
+	public void testGetToken_BothHeaders() {
+		// Arrange
+		String testAccessToken = "Bearer testAccessToken";
+		String testRefreshToken = "Bearer testRefreshToken";
 
-        when(request.getHeader("Authorization")).thenReturn(testAccessToken);
-        when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
+		when(request.getHeader("Authorization")).thenReturn(testAccessToken);
+		when(request.getHeader("X-Refresh-Token")).thenReturn(testRefreshToken);
 
-        // Act
-        Token token = tokenService.getToken(request);
+		// Act
+		Token token = tokenService.getToken(request);
 
-        // Assert
-        assertEquals("testAccessToken", token.getAccessToken());
-        assertEquals("testRefreshToken", token.getRefreshToken());
-    }
+		// Assert
+		assertEquals("testAccessToken", token.getAccessToken());
+		assertEquals("testRefreshToken", token.getRefreshToken());
+	}
 
+	@Test
+	@DisplayName("토큰 상태 변경 테스트")
+	public void testUpdateStatusToken() {
+		// Arrange
+		Token token = Token.builder()
+				.accessToken("ValidAccessToken")
+				.refreshToken("ValidRefreshToken")
+				.build();
 
-    /**
-     * @Desc 토큰 상태 변경 테스트
-     */
-    @Test
-    public void testUpdateStatusToken() {
-        // Arrange
-        Token token = Token.builder()
-                .accessToken("ValidAccessToken")
-                .refreshToken("ValidRefreshToken")
-                .build();
+		Status status = Status.INVALID;
 
-        Status status = Status.INVALID;
+		// Act
+		tokenService.updateStatusToken(token, status);
 
-        // Act
-        tokenService.updateStatusToken(token, status);
-
-        // Assert
-        verify(tokenRepository).save(any(Token.ValidToken.class));
-    }
+		// Assert
+		verify(tokenRepository).save(any(Token.ValidToken.class));
+	}
 }

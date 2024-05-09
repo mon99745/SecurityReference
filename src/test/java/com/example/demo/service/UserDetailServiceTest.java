@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -21,27 +22,23 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@DisplayName("회원 상세 서비스 테스트")
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Transactional
 @ActiveProfiles("test")
 class UserDetailServiceTest {
-
 	@Mock
 	private UserRepository userRepository;
-
 	@InjectMocks
 	private UserDetailService userDetailService;
-
 	private static final String username = "test_user";
 	private static final String password = "test_1234";
 	private static final List<String> roles = Arrays.asList("ROLE_USER");
 
-	/**
-	 * @Desc 회원 상세 정보 검색 테스트
-	 */
 	@Test
+	@DisplayName("회원 상세 정보 검색 테스트")
 	public void testLoadUserByUsername_UserFound() {
 		// Arrange
 		User user = new User(1L, username, password, roles);
@@ -56,11 +53,8 @@ class UserDetailServiceTest {
 		assertEquals(username, userDetails.getUsername());
 	}
 
-	/**
-	 * @Desc 회원 상세 정보 검색 테스트
-	 * case: 존재하지 않는 회원일 경우
-	 */
 	@Test
+	@DisplayName("회원 상세 정보 검색 테스트_예외")
 	public void testLoadUserByUsername_UserNotFound() {
 		// Arrange
 		String username = "nonExistingUser";

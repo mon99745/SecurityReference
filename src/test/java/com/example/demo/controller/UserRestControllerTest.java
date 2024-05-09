@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -24,15 +25,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-/**
- * User Controller Test
- */
+@DisplayName("회원 API 테스트")
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Transactional
 @ActiveProfiles("test")
 class UserRestControllerTest {
+	public static final String target = "Controller";
+
 	@Autowired
 	private MockMvc mvc;
 	private static final MockHttpSession SESSION = new MockHttpSession();
@@ -47,11 +48,8 @@ class UserRestControllerTest {
 			"    \"roles\": [\"" + ROLE_USER + "\"]\n" +
 			"}";
 
-	/**
-	 * @throws Exception
-	 * @Desc 회원 가입 테스트
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 가입 테스트")
 	void t01create() throws Exception {
 		mvc.perform(post(PATH + "/create")
 						.session(SESSION)
@@ -61,11 +59,8 @@ class UserRestControllerTest {
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
-	/**
-	 * @throws Exception
-	 * @Desc 회원 조회 테스트
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 조회 테스트")
 	void t02read() throws Exception {
 		t01create();
 		mvc.perform(get(PATH + "/read/{username}", username)
@@ -75,11 +70,8 @@ class UserRestControllerTest {
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
-	/**
-	 * @throws Exception
-	 * @Desc 로그인 테스트
-	 */
 	@Test
+	@DisplayName("[" + target + "] 로그인 테스트")
 	void t03login() throws Exception {
 		t01create();
 		mvc.perform(post(PATH + "/login")
@@ -94,11 +86,9 @@ class UserRestControllerTest {
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
-	/**
-	 * @throws Exception
-	 * @Desc 로그아웃 테스트 [로그인 테스크 이 후 시행]
-	 */
+
 	@Test
+	@DisplayName("[" + target + "] 로그아웃 테스트")
 	void t04logout() throws Exception {
 		t03login();
 		mvc.perform(post(PATH + "/logout")
@@ -111,11 +101,8 @@ class UserRestControllerTest {
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
-	/**
-	 * @throws Exception
-	 * @Desc 회원 탈퇴 테스트 [로그인 테스크 이 후 시행]
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 탈퇴 테스트")
 	void t05withdraw() throws Exception {
 		t03login();
 		Thread.sleep(3000);

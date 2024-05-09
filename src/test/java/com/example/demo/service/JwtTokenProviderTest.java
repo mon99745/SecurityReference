@@ -6,6 +6,7 @@ import com.example.demo.repository.TokenRepository;
 import com.example.demo.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -30,9 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Token Provider Test
- */
+@DisplayName("토큰 발급 유틸 테스트")
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.MethodName.class)
@@ -56,10 +55,8 @@ class JwtTokenProviderTest {
 	@Value("${jwt.refresh-token-valid-time}")
 	private String refreshTokenValidTime;
 
-	/**
-	 * @Desc 토큰 생성 테스트
-	 */
 	@Test
+	@DisplayName("토큰 생성 테스트")
 	public void testGenerateToken() {
 		// Arrange
 		Authentication authentication = mock(Authentication.class);
@@ -80,10 +77,8 @@ class JwtTokenProviderTest {
 		assertNotNull(refreshToken);
 	}
 
-	/**
-	 * @Desc 유효 토큰을 통해 클레임 조회 테스트
-	 */
 	@Test
+	@DisplayName("유효 토큰을 통해 클레임 조회 테스트")
 	public void testParseClaims_ValidToken() throws InterruptedException {
 		// Arrange
 		Claims claims = Jwts.claims().setSubject(null);
@@ -100,10 +95,8 @@ class JwtTokenProviderTest {
 		assertEquals(authority, claims.get("auth"));
 	}
 
-	/**
-	 * @Desc 무효 토큰에 대한 클레임 조회 테스트
-	 */
 	@Test
+	@DisplayName("무효 토큰을 통해 클레임 조회 테스트_예외")
 	public void testParseClaims_InvalidToken() throws InterruptedException {
 		// Arrange
 		Claims claims = Jwts.claims().setSubject(null);
@@ -125,10 +118,8 @@ class JwtTokenProviderTest {
 		});
 	}
 
-	/**
-	 * @Desc 유효 토큰 검증 테스트
-	 */
 	@Test
+	@DisplayName("유효 토큰 검증 테스트")
 	public void testValidateToken_ValidToken() throws InterruptedException {
 		// Arrange
 		testGenerateToken();
@@ -143,10 +134,8 @@ class JwtTokenProviderTest {
 		assertTrue(refreshTokenIsValid);
 	}
 
-	/**
-	 * @Desc 무효 토큰 검증 테스트
-	 */
 	@Test
+	@DisplayName("무효 토큰 검증 테스트_예외")
 	public void testValidateToken_InvalidToken() throws InterruptedException {
 		// Arrange
 		testGenerateToken();
