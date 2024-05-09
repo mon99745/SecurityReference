@@ -75,7 +75,7 @@ class UserServiceTest {
 
 		// Act
 		boolean result = userService.logout(request);
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 
 		// Assert
 		assertEquals(result, true);

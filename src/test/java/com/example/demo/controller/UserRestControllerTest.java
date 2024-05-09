@@ -105,7 +105,7 @@ class UserRestControllerTest {
 	@DisplayName("[" + target + "] 회원 탈퇴 테스트")
 	void t05withdraw() throws Exception {
 		t03login();
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 		mvc.perform(post(PATH + "/withdraw")
 						.session(SESSION)
 						.header("Authorization", fMap.get("grantType") + " " + fMap.get("accessToken"),

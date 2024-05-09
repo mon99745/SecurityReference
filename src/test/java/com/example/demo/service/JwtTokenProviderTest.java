@@ -85,7 +85,7 @@ class JwtTokenProviderTest {
 		claims.put("auth", authority);
 
 		testGenerateToken();
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 
 		// Act
 		Claims ActClaims = jwtTokenProvider.parseClaims(accessToken);
@@ -103,14 +103,14 @@ class JwtTokenProviderTest {
 		claims.put("auth", authority);
 
 		testGenerateToken();
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 
 
 		Token.ValidToken token = tokenRepository.findByAccessToken(accessToken).get();
 		token.setStatus(Status.INVALID);
 		tokenRepository.save(token);
 
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 
 		// Act & Assert
 		assertThrows(RuntimeException.class, () -> {
@@ -123,7 +123,7 @@ class JwtTokenProviderTest {
 	public void testValidateToken_ValidToken() throws InterruptedException {
 		// Arrange
 		testGenerateToken();
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 
 		// Act
 		boolean accessTokenIsValid = jwtTokenProvider.validateToken(accessToken);
@@ -139,7 +139,7 @@ class JwtTokenProviderTest {
 	public void testValidateToken_InvalidToken() throws InterruptedException {
 		// Arrange
 		testGenerateToken();
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 
 		Token.ValidToken token = tokenRepository.findByRefreshToken(refreshToken).get().builder()
 				.status(Status.INVALID)
