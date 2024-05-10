@@ -1,19 +1,14 @@
 package com.example.demo.service;
 
+import com.example.demo.config.annotation.ServiceTest;
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +17,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@ServiceTest
 @DisplayName("회원 상세 서비스 테스트")
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.MethodName.class)
-@Transactional
-@ActiveProfiles("test")
 class UserDetailServiceTest {
 	@Mock
 	private UserRepository userRepository;

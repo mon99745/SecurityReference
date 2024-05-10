@@ -25,7 +25,7 @@
   1. (개선/하) 테스트 코드용 DB 생성
   1. (개선/하) 테스트 코드 추가(controller/handler/service, case:8)
   1. (개선/중) 테스트 코드 개선(controller/service, case:24)
-     > @DisplayName - Target Naming, Thread.sleep 및 세분화 작업
+     > @DisplayName/@CustomAnotation/Tread-sleep, Test Case 추가
   1. (개선/하) 예외 처리 추가  
      > 1. 회원 중복 가입 > [msg: 이미 존재하는 아이디입니다.]
      > 2. ID/PASSWORD 오기입 > [msg: 해당하는 유저를 찾을 수 없습니다.]

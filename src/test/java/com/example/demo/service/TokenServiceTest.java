@@ -1,18 +1,13 @@
 package com.example.demo.service;
 
+import com.example.demo.config.annotation.ServiceTest;
 import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.repository.TokenRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,12 +16,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
+@ServiceTest
 @DisplayName("토큰 서비스 테스트")
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.MethodName.class)
-@Transactional
-@ActiveProfiles("test")
 class TokenServiceTest {
 	@Mock
 	private HttpServletRequest request;

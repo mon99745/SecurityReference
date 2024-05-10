@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.config.annotation.ServiceTest;
 import com.example.demo.domain.Status;
 import com.example.demo.domain.Token;
 import com.example.demo.repository.TokenRepository;
@@ -7,18 +8,11 @@ import com.example.demo.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,12 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ServiceTest
 @DisplayName("토큰 발급 유틸 테스트")
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.MethodName.class)
-@Transactional
-@ActiveProfiles("test")
 class JwtTokenProviderTest {
 	@Autowired
 	private TokenRepository tokenRepository;
@@ -45,15 +35,6 @@ class JwtTokenProviderTest {
 	private static String accessToken;
 	private static String refreshToken;
 	private static final String authority = "ROLE_USER";
-
-	@Value("${jwt.secret}")
-	private String secretKey;
-
-	@Value("${jwt.access-token-valid-time}")
-	private String accessTokenValidTime;
-
-	@Value("${jwt.refresh-token-valid-time}")
-	private String refreshTokenValidTime;
 
 	@Test
 	@DisplayName("토큰 생성 테스트")
