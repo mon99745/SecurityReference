@@ -1,16 +1,13 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.annotation.ControllerTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -23,11 +20,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.MethodName.class)
-@ActiveProfiles("test")
+@ControllerTest
+@DisplayName("회원 API 테스트")
 class UserRestControllerTest {
+	public static final String target = "Controller";
+
 	@Autowired
 	private MockMvc mvc;
 	private static final MockHttpSession SESSION = new MockHttpSession();
@@ -42,11 +39,8 @@ class UserRestControllerTest {
 			"    \"roles\": [\"" + ROLE_USER + "\"]\n" +
 			"}";
 
-	/**
-	 * @throws Exception
-	 * @Desc 최초 시행
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 가입 테스트")
 	void t01create() throws Exception {
 		mvc.perform(post(PATH + "/create")
 						.session(SESSION)
@@ -57,7 +51,9 @@ class UserRestControllerTest {
 	}
 
 	@Test
+	@DisplayName("[" + target + "] 회원 조회 테스트")
 	void t02read() throws Exception {
+		t01create();
 		mvc.perform(get(PATH + "/read/{username}", username)
 						.session(SESSION)
 						.contentType(MediaType.APPLICATION_JSON))
@@ -66,7 +62,9 @@ class UserRestControllerTest {
 	}
 
 	@Test
+	@DisplayName("[" + target + "] 로그인 테스트")
 	void t03login() throws Exception {
+		t01create();
 		mvc.perform(post(PATH + "/login")
 						.session(SESSION)
 						.contentType(MediaType.APPLICATION_JSON)
@@ -79,31 +77,31 @@ class UserRestControllerTest {
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
-	/**
-	 * @throws Exception
-	 * @Desc 로그인 테스크 이 후 시행
-	 */
+
 	@Test
+	@DisplayName("[" + target + "] 로그아웃 테스트")
 	void t04logout() throws Exception {
+		t03login();
 		mvc.perform(post(PATH + "/logout")
 						.session(SESSION)
-						.header("Authorization", fMap.get("grantType") + " " + fMap.get("accessToken"))
+						.header("Authorization", fMap.get("grantType") + " " + fMap.get("accessToken"),
+								"X-Refresh-Token", fMap.get("grantType") + " " + fMap.get("refreshToken")
+						)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
-	/**
-	 * @throws Exception
-	 * @Desc 로그인 테스크 이 후 시행
-	 */
 	@Test
+	@DisplayName("[" + target + "] 회원 탈퇴 테스트")
 	void t05withdraw() throws Exception {
 		t03login();
+		Thread.sleep(1000);
 		mvc.perform(post(PATH + "/withdraw")
 						.session(SESSION)
-						.header("Authorization", fMap.get("grantType") + " " + fMap.get("accessToken"))
-						.contentType(MediaType.APPLICATION_JSON))
+						.header("Authorization", fMap.get("grantType") + " " + fMap.get("accessToken"),
+								"X-Refresh-Token", fMap.get("grantType") + " " + fMap.get("refreshToken")
+						).contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}

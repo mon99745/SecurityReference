@@ -40,12 +40,21 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	/**
+	 * 아이디
+	 */
 	@Column(updatable = false, unique = true, nullable = false)
 	private String username;
 
+	/**
+	 * 패스워드
+	 */
 	@Column(nullable = false)
 	private String password;
 
+	/**
+	 * 권한
+	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Builder.Default
 	private List<String> roles = new ArrayList<>();
