@@ -49,7 +49,12 @@ public class JwtTokenProvider {
 	@Value("${jwt.secret}")
 	private String secretKey;
 
-	// 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
+	/**
+	 * User 정보를 통해 AccessToken, RefreshToken 생성
+	 *
+	 * @param authentication
+	 * @return
+	 */
 	public Token generateToken(Authentication authentication) {
 		// 권한 가져오기
 		String authorities = authentication.getAuthorities().stream()
@@ -90,6 +95,13 @@ public class JwtTokenProvider {
 				.build();
 	}
 
+	/**
+	 * RefreshToken을 통해 AccessToken을 재발급
+	 *
+	 * @param authentication
+	 * @param refreshToken
+	 * @return
+	 */
 	public Token regenerateToken(Authentication authentication, String refreshToken) {
 		// 권한 가져오기
 		String authorities = authentication.getAuthorities().stream()
@@ -120,7 +132,12 @@ public class JwtTokenProvider {
 				.build();
 	}
 
-	// JWT 토큰을 복호화하여 토큰의 권한 정보 추출 메서드
+	/**
+	 * JWT 토큰을 복호화하여 토큰의 권한 정보를 추출
+	 *
+	 * @param token
+	 * @return
+	 */
 	public Authentication getAuthentication(String token) {
 		// 토큰 복호화
 		Claims claims = parseClaims(token);
@@ -140,33 +157,44 @@ public class JwtTokenProvider {
 		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 	}
 
-    // 토큰 정보를 검증하는 메서드
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(encrypt(secretKey))
-                    .build().parseClaimsJws(token);
-            Token.ValidToken tokenObject = tokenRepository.findByAccessToken(token)
+	/**
+	 * JWT 토큰 정보를 검증하는 메서드
+	 *
+	 * @param token
+	 * @return
+	 */
+	public boolean validateToken(String token) {
+		try {
+			Jwts.parserBuilder()
+					.setSigningKey(encrypt(secretKey))
+					.build().parseClaimsJws(token);
+			Token.ValidToken tokenObject = tokenRepository.findByAccessToken(token)
 					.orElseGet(() -> tokenRepository.findByRefreshToken(token)
-					.orElseThrow(() -> new RuntimeException("Token not found")));
-            if (!tokenObject.getStatus().equals(Status.VALID)) {
-                throw new RuntimeException("사용 불가능한 토큰입니다. Token = " + token);
-            }
-            return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return false;
-    }
+							.orElseThrow(() -> new RuntimeException("Token not found")));
+			if (!tokenObject.getStatus().equals(Status.VALID)) {
+				throw new RuntimeException("사용 불가능한 토큰입니다. Token = " + token);
+			}
+			return true;
+		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+			log.info("Invalid JWT Token", e);
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT Token", e);
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT Token", e);
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims string is empty.", e);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return false;
+	}
 
+	/**
+	 * AccessToken의 Claim을 추출
+	 *
+	 * @param accessToken
+	 * @return
+	 */
 	public Claims parseClaims(String accessToken) {
 		try {
 			Token.ValidToken token = tokenRepository.findByAccessToken(accessToken)
@@ -182,16 +210,34 @@ public class JwtTokenProvider {
 		}
 	}
 
+	/**
+	 * Key 암호화
+	 *
+	 * @param secretKey
+	 * @return
+	 */
 	public Key encrypt(String secretKey) {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
+	/**
+	 * AccessToken Format 설정
+	 *
+	 * @param response
+	 * @param accessToken
+	 */
 	public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-		response.setHeader("authorization", "bearer "+ accessToken);
+		response.setHeader("authorization", "bearer " + accessToken);
 	}
 
+	/**
+	 * RefreshToken Format 설정
+	 *
+	 * @param response
+	 * @param refreshToken
+	 */
 	public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-		response.setHeader("refreshToken", "bearer "+ refreshToken);
+		response.setHeader("refreshToken", "bearer " + refreshToken);
 	}
 }

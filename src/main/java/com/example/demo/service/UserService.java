@@ -6,7 +6,6 @@ import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -31,6 +30,13 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final TokenService tokenService;
 
+	/**
+	 * 로그인 처리
+	 *
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	@Transactional
 	public Token login(String username, String password) {
 		// 1. Login ID/PW 를 기반으로 Authentication 객체 생성
@@ -50,6 +56,12 @@ public class UserService {
 		return token;
 	}
 
+	/**
+	 * 로그아웃 처리
+	 *
+	 * @param request
+	 * @return
+	 */
 	@Transactional
 	public boolean logout(HttpServletRequest request) {
 		Token token = tokenService.getToken(request);
@@ -57,6 +69,12 @@ public class UserService {
 		return result;
 	}
 
+	/**
+	 * 회원 가입 처리
+	 *
+	 * @param createMsg
+	 * @return
+	 */
 	@Transactional
 	public User create(User createMsg) {
 		if (userRepository.findByUsername(createMsg.getUsername()).isPresent()) {
@@ -69,6 +87,12 @@ public class UserService {
 		}
 	}
 
+	/**
+	 * 회원 조회 처리
+	 *
+	 * @param username
+	 * @return
+	 */
 	public Optional<User> read(String username) {
 		Optional<User> user = userRepository.findByUsername(username);
 		if (!user.isPresent()) {
@@ -77,6 +101,12 @@ public class UserService {
 		return user;
 	}
 
+	/**
+	 * 회원 탈퇴 처리
+	 *
+	 * @param request
+	 * @return
+	 */
 	@Transactional
 	public boolean withdraw(HttpServletRequest request) {
 		boolean result = false;
