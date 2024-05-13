@@ -7,10 +7,10 @@
 
 ## Architecture in Project
 ### Spring Security - Process
-![](src/main/resources/static/img/SpringSecurityProcess.png)
+![](src/main/resources/static/img/diagram/SpringSecurityProcess.png)
 ### JWT - Life Cycle
-![](src/main/resources/static/img/JwtLifeCycle.png)
+![](src/main/resources/static/img/diagram/JwtLifeCycle.png)
 ### Spring Security - Architecture
-![](src/main/resources/static/img/SpringSecurityArchitecture.png)
+![](src/main/resources/static/img/diagram/SpringSecurityArchitecture.png)
 ### OAuth2.0 - 권한 부여 승인 코드 방식
-![](src/main/resources/static/img/OAuth2.0.png)
+![](src/main/resources/static/img/diagram/OAuth2.0.png)
