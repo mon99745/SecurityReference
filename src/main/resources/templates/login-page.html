@@ -30,9 +30,11 @@
                         <button type="submit" class="btn btn-primary" onclick="login()">Login</button>
                         <a th:href="@{/signup}" class="btn btn-primary">Sign Up</a>
                         <br><br>
-<!--                        <button class="btn btn-white" onclick="case1()"><img th:src="@{/img/google_logo.png}" style="height: 20px; margin: 3px">구글 간편로그인</button>-->
-<!--                        <button class="btn btn-white" onclick="case2()"><img th:src="@{/img/naver_logo.jpg}" style="height:20px; margin: 3px; ">네이버 간편로그인</button>-->
                     </form>
+                    <a href="/oauth2/authorization/google" class="btn btn-white active" role="button">
+                        <img th:src="@{/img/logo/google_logo.png}" style="height: 20px; margin: 3px"> Google Login</a>
+                    <a href="/oauth2/authorization/naver" class="btn btn-white active" role="button">
+                        <img th:src="@{/img/logo/naver_logo.png}" style="height:20px; margin: 3px; "> Naver Login</a><br>
                 </div>
             </div>
         </div>
