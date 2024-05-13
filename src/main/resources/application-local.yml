@@ -30,3 +30,13 @@ spring:
   jpa:
     hibernate.ddl-auto: update
 #    show-sql: true
+
+  ### Security 관리
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            scope: profile,email
