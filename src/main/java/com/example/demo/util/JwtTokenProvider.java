@@ -135,12 +135,12 @@ public class JwtTokenProvider {
 	/**
 	 * JWT 토큰을 복호화하여 토큰의 권한 정보를 추출
 	 *
-	 * @param token
+	 * @param accessToken, refreshToken
 	 * @return
 	 */
-	public Authentication getAuthentication(String token) {
+	public Authentication getAuthentication(String accessToken, String refreshToken) {
 		// 토큰 복호화
-		Claims claims = parseClaims(token);
+		Claims claims = parseClaims(accessToken, refreshToken);
 
 		if (claims.get("auth") == null) {
 			throw new RuntimeException("권한 정보가 없는 토큰입니다.");
@@ -190,21 +190,34 @@ public class JwtTokenProvider {
 	}
 
 	/**
-	 * AccessToken의 Claim을 추출
+	 * Token Claim 추출
 	 *
-	 * @param accessToken
+	 * @param accessToken, refreshToken
 	 * @return
 	 */
-	public Claims parseClaims(String accessToken) {
+	public Claims parseClaims(String accessToken, String refreshToken) {
+		Token.ValidToken token = null;
+		String targetToken = null;
+
 		try {
-			Token.ValidToken token = tokenRepository.findByAccessToken(accessToken)
-					.orElseThrow(() -> new RuntimeException("Token not found"));
+			if (accessToken != null) {
+				targetToken = accessToken;
+				token = tokenRepository.findByAccessToken(targetToken)
+						.orElseThrow(() -> new RuntimeException("Access Token not found"));
+			} else if (refreshToken != null) {
+				targetToken = refreshToken;
+				token = tokenRepository.findByRefreshToken(targetToken)
+						.orElseThrow(() -> new RuntimeException("Refresh Token not found"));
+			} else {
+				new RuntimeException("All Token is Empty");
+			}
+
 			if (!token.getStatus().equals(Status.VALID)) {
 				throw new RuntimeException("사용 불가능한 토큰입니다. Token = " + token);
 			}
 			return Jwts.parserBuilder()
 					.setSigningKey(encrypt(secretKey)).build()
-					.parseClaimsJws(accessToken).getBody();
+					.parseClaimsJws(targetToken).getBody();
 		} catch (ExpiredJwtException e) {
 			return e.getClaims();
 		}
