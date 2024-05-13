@@ -12,3 +12,5 @@
 ![](src/main/resources/static/img/JwtLifeCycle.png)
 ### Spring Security - Architecture
 ![](src/main/resources/static/img/SpringSecurityArchitecture.png)
+### OAuth2.0 - 권한 부여 승인 코드 방식
+![](src/main/resources/static/img/OAuth2.0.png)
