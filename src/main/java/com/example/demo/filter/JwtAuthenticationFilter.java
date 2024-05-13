@@ -52,12 +52,12 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 			if (jwtTokenProvider.validateToken(accessToken)) {
 				setAuthenticationInContext(accessToken);
 			} else if (refreshToken != null && tokenService.existsRefreshToken(refreshToken)) {
+				// 2-2 Refresh Token 검사
 				if (jwtTokenProvider.validateToken(refreshToken));
 				// Access Token 재발급
-				Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+				Authentication authentication = jwtTokenProvider.getAuthentication(null, refreshToken);
 				String newAccessToken = jwtTokenProvider.regenerateToken(authentication, token.getRefreshToken())
 						.getAccessToken();
-
 				// Header 에 Access Token 추가해서 반환
 				jwtTokenProvider.setHeaderAccessToken((HttpServletResponse) response, newAccessToken);
 
@@ -77,7 +77,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	 * @param accessToken
 	 */
 	private void setAuthenticationInContext(String accessToken) {
-		Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+		Authentication authentication = jwtTokenProvider.getAuthentication(accessToken, null);
 		SecurityContextHolder
 				.getContext()
 				.setAuthentication(authentication);

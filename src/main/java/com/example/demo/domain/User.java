@@ -53,6 +53,12 @@ public class User implements UserDetails {
 	private String password;
 
 	/**
+	 * 성명
+	 */
+	@Column(nullable = false)
+	private String name;
+
+	/**
 	 * 권한
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)

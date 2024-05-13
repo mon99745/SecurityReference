@@ -32,6 +32,7 @@ class UserServiceTest {
 	private static Token token = null;
 	private static final String username = "test_user";
 	private static final String password = "test_1234";
+	private static final String name = "USER";
 	private static final List<String> roles = Arrays.asList("ROLE_USER");
 	private static String testAccessToken = "Bearer testAccessToken";
 	private static String testRefreshToken = "Bearer testRefreshToken";
@@ -79,6 +80,7 @@ class UserServiceTest {
 		User createMsg = User.builder()
 				.username(username)
 				.password(password)
+				.name(name)
 				.roles(roles)
 				.build();
 
@@ -99,6 +101,7 @@ class UserServiceTest {
 		User createMsg = User.builder()
 				.username(username)
 				.password(password)
+				.name(name)
 				.roles(roles)
 				.build();
 

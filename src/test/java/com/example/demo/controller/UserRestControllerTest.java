@@ -30,12 +30,14 @@ class UserRestControllerTest {
 	private static final MockHttpSession SESSION = new MockHttpSession();
 	private static final String username = "test_user";
 	private static final String password = "test_1234";
+	private static final String name = "USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_USER = "ROLE_USER";
 	private static Map<String, String> fMap = new HashMap<>();
 	private static final String createMsg = "{\n" +
 			"    \"username\" : \"" + username + "\",\n" +
 			"    \"password\" : \"" + password + "\",\n" +
+			"    \"name\" : \"" + name + "\",\n" +
 			"    \"roles\": [\"" + ROLE_USER + "\"]\n" +
 			"}";
 

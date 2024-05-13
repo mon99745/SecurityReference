@@ -116,7 +116,7 @@ public class UserService {
 
 			// getUsername in Token
 			UserDetails userDetails = (UserDetails) jwtTokenProvider
-					.getAuthentication(token.getAccessToken())
+					.getAuthentication(token.getAccessToken(), null)
 					.getPrincipal();
 
 			String username = userDetails.getUsername();

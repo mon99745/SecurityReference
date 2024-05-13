@@ -69,7 +69,7 @@ class JwtTokenProviderTest {
 		Thread.sleep(1000);
 
 		// Act
-		Claims ActClaims = jwtTokenProvider.parseClaims(accessToken);
+		Claims ActClaims = jwtTokenProvider.parseClaims(accessToken, null);
 
 		// Assert
 		assertEquals(claims.getSubject(), ActClaims.getSubject());
@@ -95,7 +95,7 @@ class JwtTokenProviderTest {
 
 		// Act & Assert
 		assertThrows(RuntimeException.class, () -> {
-			jwtTokenProvider.parseClaims(accessToken);
+			jwtTokenProvider.parseClaims(accessToken, null);
 		});
 	}
 
