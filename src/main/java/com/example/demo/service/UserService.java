@@ -77,7 +77,8 @@ public class UserService {
 	 */
 	@Transactional
 	public User create(User createMsg) {
-		if (userRepository.findByUsername(createMsg.getUsername()).isPresent()) {
+		if (createMsg.getProvider().isEmpty() &&
+				userRepository.findByUsername(createMsg.getUsername()).isPresent()) {
 			throw new RuntimeException("이미 존재하는 아이디입니다.");
 		} else {
 			String hashPw = bCryptPasswordEncoder.encode(createMsg.getPassword());

@@ -41,7 +41,8 @@ public class SecurityConfig {
 				.antMatchers(
 						"/", "/signup", "/error",
 						"/css/**", "/img/**", "/js/**", "/user/**", "/test/**",
-						"/h2-console/**", "/login-page", "/oauth/**")
+						"/h2-console/**", "/login-page",
+						"/oauth/**", "/oauthLogin-page/**", "/OAuthLogin/**")
 				.permitAll()
 				.antMatchers("/index-test-case*").authenticated()
 				.anyRequest().authenticated()
@@ -64,13 +65,8 @@ public class SecurityConfig {
 		http
 				.oauth2Login()
 				.loginPage("/login-page")
-				.defaultSuccessUrl("/", true)
+				.defaultSuccessUrl("/oauthLogin-page", true)
 				.userInfoEndpoint()
 				.userService(oAuth2Service);
-	}
-
-	@Bean //@Bean을 통해 비밀번호 암호화 스프링 부트 2.0부터는 필수
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 }

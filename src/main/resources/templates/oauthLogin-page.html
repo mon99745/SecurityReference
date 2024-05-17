@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script th:src="@{/js/index.js}"></script>
+</head>
+<body>
+<div class="container text-center mt-3">
+    <button class="btn btn-primary" onclick="location.href='/'">HOME</button>
+</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">OAuth2.0 Login</div>
+                <div class="card-body">
+                    <form id="oauthLoginForm" method="post">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   placeholder="Enter username">
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="oauthLogin()">해당 계정으로 로그인을 시행하시겠습니까? </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
