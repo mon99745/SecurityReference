@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.OAuthAttributes;
+import com.example.demo.config.OAuthAttributes;
 import com.example.demo.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

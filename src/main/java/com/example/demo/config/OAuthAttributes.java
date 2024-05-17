@@ -1,4 +1,6 @@
-package com.example.demo.domain;
+package com.example.demo.config;
+
+import com.example.demo.domain.User;
 
 import java.util.Arrays;
 import java.util.Map;
