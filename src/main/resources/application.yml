@@ -2,6 +2,9 @@
 server:
 ### 내장 WAS 관리
   port: 8080
+  servlet:
+    session:
+      persistent: false
 
 ### 토큰 관리
 jwt:
