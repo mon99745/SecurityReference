@@ -84,7 +84,7 @@ function oauthLogin() {
 
             var formData = new FormData(this);
 
-            fetch("/OAuthLogin", {
+            fetch("/user/oauthLogin", {
                 method: "POST",
                 body: formData
             })

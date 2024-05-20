@@ -41,6 +41,19 @@ public class UserRestController {
 	}
 
 	/**
+	 * 간편 로그인
+	 *
+	 * @param username
+	 * @param session
+	 * @return
+	 */
+	@PostMapping("oauthLogin")
+	public Token login(String username, HttpSession session) {
+		String tmpPassword = (String) session.getAttribute("tmpPassword");
+		return userService.login(username, tmpPassword);
+	}
+
+	/**
 	 * 로그아웃
 	 *
 	 * @param request
@@ -83,17 +96,5 @@ public class UserRestController {
 	@PostMapping("withdraw")
 	public boolean withdraw(HttpServletRequest request) {
 		return userService.withdraw(request);
-	}
-
-	/**
-	 * 간편 로그인
-	 *
-	 * @param username
-	 * @return
-	 */
-	@PostMapping("OAuthLogin")
-	public Token login(String username, HttpSession session) {
-		String tmpPassword = (String) session.getAttribute("tmpPassword");
-		return userService.login(username, tmpPassword);
 	}
 }

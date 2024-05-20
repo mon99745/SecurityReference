@@ -34,22 +34,26 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 		OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
 		OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
-		// 로그인을 수행한 서비스의 이름
+		// 1. 로그인을 수행한 서비스의 이름 추출
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-		// 사용자가 가지고 있는 정보
+		// 2. 사용자가 가지고 있는 정보 추출
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 
-		// 임시 비밀번호 발급 - Session에 저장
+		// 3. 임시 비밀번호 발급
 		String tmpPassword = String.valueOf(new SecureRandom().nextInt());
-		httpSession.setAttribute("tmpPassword", tmpPassword);
 
 		User userProfile = OAuthAttributes.extract(registrationId, attributes);
 		userProfile.setProvider(registrationId);
 		userProfile.setPassword(tmpPassword);
 		userProfile.setRoles(Collections.singletonList("ROLE_USER"));
 
+		// 4. 간편 회원 가입
 		userService.create(userProfile);
+
+		// 5. 아이디, 임시 비밀번호 Session 저장
+		httpSession.setAttribute("username", userProfile.getUsername());
+		httpSession.setAttribute("tmpPassword", tmpPassword);
 
 		return oAuth2User;
 	}

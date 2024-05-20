@@ -41,8 +41,7 @@ public class SecurityConfig {
 				.antMatchers(
 						"/", "/signup", "/error",
 						"/css/**", "/img/**", "/js/**", "/user/**", "/test/**",
-						"/h2-console/**", "/login-page",
-						"/oauth/**", "/oauthLogin-page/**", "/OAuthLogin/**")
+						"/h2-console/**", "/login-*")
 				.permitAll()
 				.antMatchers("/index-test-case*").authenticated()
 				.anyRequest().authenticated()
@@ -65,7 +64,7 @@ public class SecurityConfig {
 		http
 				.oauth2Login()
 				.loginPage("/login-page")
-				.defaultSuccessUrl("/oauthLogin-page", true)
+				.defaultSuccessUrl("/login-redirect-page", true)
 				.userInfoEndpoint()
 				.userService(oAuth2Service);
 	}

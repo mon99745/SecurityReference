@@ -12,10 +12,7 @@ public class IndexController {
 	public String index() {
 		return "index";
 	}
-	@GetMapping("oauthLogin-page")
-	public String oauthLogin_page() {
-		return "oauthLogin-page";
-	}
+
 	@GetMapping("/index-test-case1")
 	public String index_test_case_1() {
 		return "index-test-case1";

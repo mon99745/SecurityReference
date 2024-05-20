@@ -13,6 +13,11 @@ public class UserController {
 		return "login-page";
 	}
 
+	@GetMapping("login-redirect-page")
+	public String oauth2Login() {
+		return "login-redirect-page";
+	}
+
 	@GetMapping("/signup")
 	public String signup() {
 		return "signup";
