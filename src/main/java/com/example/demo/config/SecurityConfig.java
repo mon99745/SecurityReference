@@ -27,8 +27,8 @@ public class SecurityConfig {
 	private final TokenService tokenService;
 	private final OAuth2Service oAuth2Service;
 
-	@Value("${spring.security.oauth2-enabled}")
-	private final String oauth2Enabled = "false";
+	@Value("${spring.security.oauth2-enabled:false}")
+	private boolean oauth2Enabled;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,7 +55,7 @@ public class SecurityConfig {
 				.loginPage("/login-page");
 
 				configureJwt(http);
-				if (oauth2Enabled == "true") {
+				if (oauth2Enabled) {
 					configureOAuth2(http);
 				}
 
