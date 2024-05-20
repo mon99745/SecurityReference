@@ -129,11 +129,12 @@ function logout() {
         });
 }
 
-function submitForm() {
+function signUp() {
     var formData = {
         username: document.getElementById("username").value,
         password: document.getElementById("password").value,
         name: document.getElementById("name").value,
+        provider: document.getElementById("provider").value,
         roles: [document.getElementById("roles").value]
     };
 
