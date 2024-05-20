@@ -7,8 +7,8 @@ server:
 jwt:
 #  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
 #  토큰 유효 시간
-#  access-token-valid-time: 300000 # (defalut: 5분)
-#  refresh-token-valid-time: 86400000 # (defalut: 24시간)
+#  access-token-valid-time: 300000 # (default: 5분)
+#  refresh-token-valid-time: 86400000 # (default: 24시간)
 
 ### Spring 관리
 spring:
@@ -30,3 +30,25 @@ spring:
   jpa:
     hibernate.ddl-auto: update
 #    show-sql: true
+
+  ### Security 관리
+  security:
+    ### OAuth2.0 사용여부 (default: false)
+    oauth2-enabled: false
+    oauth2:
+      client:
+#        registration:
+#          google:
+#            client-id:
+#            client-secret:
+#            scope:
+#              - email
+#              - profile
+#          naver:
+#            client-id:
+#            client-secret:
+#            scope:
+#              - name
+#              - email
+
+

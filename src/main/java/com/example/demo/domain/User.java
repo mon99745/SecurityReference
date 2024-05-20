@@ -59,6 +59,12 @@ public class User implements UserDetails {
 	private String name;
 
 	/**
+	 * 로그인한 서비스명
+	 */
+	@Column
+	private String provider;
+
+	/**
 	 * 권한
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import java.util.Optional;
 
@@ -37,6 +38,19 @@ public class UserRestController {
 	@PostMapping("login")
 	public Token login(String username, String password) {
 		return userService.login(username, password);
+	}
+
+	/**
+	 * 간편 로그인
+	 *
+	 * @param username
+	 * @param session
+	 * @return
+	 */
+	@PostMapping("oauthLogin")
+	public Token login(String username, HttpSession session) {
+		String tmpPassword = (String) session.getAttribute("tmpPassword");
+		return userService.login(username, tmpPassword);
 	}
 
 	/**
@@ -75,6 +89,7 @@ public class UserRestController {
 
 	/**
 	 * 회원탈퇴
+	 *
 	 * @param request
 	 * @return
 	 */

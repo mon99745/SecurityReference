@@ -27,13 +27,14 @@ class UserDetailServiceTest {
 	private static final String username = "test_user";
 	private static final String password = "test_1234";
 	private static final String name = "USER";
+	private static final String provier = null;
 	private static final List<String> roles = Arrays.asList("ROLE_USER");
 
 	@Test
 	@DisplayName("회원 상세 정보 검색 테스트")
 	public void testLoadUserByUsername_UserFound() {
 		// Arrange
-		User user = new User(1L, username, password, name, roles);
+		User user = new User(1L, username, password, name, provier, roles);
 		when(userRepository.findByUsername(username))
 				.thenReturn(Optional.of(user));
 

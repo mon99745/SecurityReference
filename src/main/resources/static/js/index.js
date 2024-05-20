@@ -54,7 +54,8 @@ function goPage(url) {
 }
 
 function login() {
-    document.getElementById("loginForm").addEventListener("submit", function (event) {
+    document.getElementById("loginForm")
+        .addEventListener("submit", function (event) {
         event.preventDefault(); // 기본 동작 방지
 
         var formData = new FormData(this);
@@ -74,6 +75,30 @@ function login() {
                 console.error("Error:", error);
             });
     });
+}
+
+function oauthLogin() {
+    document.getElementById("oauthLoginForm")
+        .addEventListener("submit", function (event) {
+            event.preventDefault(); // 기본 동작 방지
+
+            var formData = new FormData(this);
+
+            fetch("/user/oauthLogin", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem("accessToken", data.accessToken);
+                    localStorage.setItem("refreshToken", data.refreshToken);
+
+                    window.location.href = "/";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        });
 }
 
 function logout() {
@@ -104,11 +129,12 @@ function logout() {
         });
 }
 
-function submitForm() {
+function signUp() {
     var formData = {
         username: document.getElementById("username").value,
         password: document.getElementById("password").value,
         name: document.getElementById("name").value,
+        provider: document.getElementById("provider").value,
         roles: [document.getElementById("roles").value]
     };
 
