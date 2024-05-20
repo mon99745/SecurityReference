@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
-public enum OAuthAttributes {
+public enum OAuth2Attributes {
 
 	GOOGLE("google", (attribute) -> {
 		User userProfile = new User();
@@ -30,7 +30,7 @@ public enum OAuthAttributes {
 	private final String registrationId;
 	private final Function<Map<String, Object>, User> of; // 로그인한 사용자의 정보를 통하여 UserProfile을 가져옴
 
-	OAuthAttributes(String registrationId, Function<Map<String, Object>, User> of) {
+	OAuth2Attributes(String registrationId, Function<Map<String, Object>, User> of) {
 		this.registrationId = registrationId;
 		this.of = of;
 	}

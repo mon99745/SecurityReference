@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.config.OAuthAttributes;
+import com.example.demo.config.OAuth2Attributes;
 import com.example.demo.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -43,7 +43,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 		// 3. 임시 비밀번호 발급
 		String tmpPassword = String.valueOf(new SecureRandom().nextInt());
 
-		User userProfile = OAuthAttributes.extract(registrationId, attributes);
+		User userProfile = OAuth2Attributes.extract(registrationId, attributes);
 		userProfile.setProvider(registrationId);
 		userProfile.setPassword(tmpPassword);
 		userProfile.setRoles(Collections.singletonList("ROLE_USER"));
