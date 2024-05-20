@@ -3,7 +3,6 @@ package com.example.demo.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "UserInfo")
 public class User implements UserDetails {
-
 	/**
 	 * 회원 식별 번호
 	 */
@@ -42,12 +40,33 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	/**
+	 * 아이디
+	 */
 	@Column(updatable = false, unique = true, nullable = false)
 	private String username;
 
+	/**
+	 * 패스워드
+	 */
 	@Column(nullable = false)
 	private String password;
 
+	/**
+	 * 성명
+	 */
+	@Column(nullable = false)
+	private String name;
+
+	/**
+	 * 로그인한 서비스명
+	 */
+	@Column
+	private String provider;
+
+	/**
+	 * 권한
+	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Builder.Default
 	private List<String> roles = new ArrayList<>();

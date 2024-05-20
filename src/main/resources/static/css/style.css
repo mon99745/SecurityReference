@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 600px;
+    margin: 100px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h1 {
+    text-align: center;
+}
+center {
+    display: block;
+    text-align: center;
+}
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #0056b3;
+}
+
+.button:disabled {
+    background-color: #ccc; /* 비활성화 상태에서의 배경색 */
+    color: #666; /* 비활성화 상태에서의 글자색 */
+    cursor: not-allowed; /* 마우스 커서를 변경하여 사용자에게 버튼이 비활성화되었음을 알림 */
+    border-color: #ccc; /* 비활성화 상태에서의 테두리 색상 */
+    border-style: solid; /* 테두리 스타일 지정 */
+    border-width: 1px; /* 테두리 두께 지정 */
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Index Test Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <script th:src="@{/js/index.js}"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Index Test Page</h1>
+    <center>
+        <h2> Test Case 2</h2>
+        <h3> 인증/인가 테스트 OK</h3>
+        <h5> [회원 권한 열람 가능한 페이지] </h5>
+        <button onclick="location.href='/'">Index Page</button>
+        <button onclick="logout()">Logout</button>
+        <button onclick="withdraw()">Withdraw</button>
+        <br><br>
+        <button class="button" onclick="goPage('/index-test-case1')">Test Page 1</button>
+        <button class="button"onclick="goPage('/index-test-case2')"disabled>Test Page 2</button>
+        <button class="button"onclick="goPage('/index-test-case3')">Test Page 3</button>
+    </center>
+</div>
+</body>
+</html>

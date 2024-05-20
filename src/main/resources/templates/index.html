@@ -1,57 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Index Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <script th:src="@{/js/index.js}"></script>
 </head>
 <body>
-<center> Index Page</center>
-<center> 인증 테스트</center>
-<center>
-    <!-- 버튼을 클릭할 때 JavaScript 함수를 호출하여 JWT 토큰을 헤더에 포함하여 페이지 이동 -->
-    <button style="color: blue" onclick="redirectToIndexTest()">Index Test Page</button>
-</center>
-
-<script>
-    // 로컬 스토리지에서 JWT 토큰을 가져옴
-    var accessToken = localStorage.getItem("accessToken");
-    var refreshToken = localStorage.getItem("refreshToken");
-
-    // 페이지 이동 함수
-    function redirectToIndexTest() {
-        // JWT 토큰 값이 없다면 경고를 표시하고 로그인 페이지로 이동
-        if (!accessToken || !refreshToken) {
-            console.log("JWT 토큰이 존재하지 않습니다.");
-            window.location.href = "/login";
-            return;
-        }
-
-        var xhr = new XMLHttpRequest();
-
-        // 요청 준비
-        xhr.open("GET", "/index-test", true);
-        // JWT 토큰을 헤더에 추가
-        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-        // xhr.setRequestHeader("refreshToken", "Bearer " + refreshToken);
-
-        // 요청 완료 후의 처리
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    console.log(xhr.responseText);
-                    // 서버로부터 받은 HTML 응답을 이용하여 페이지 이동
-                    document.open();
-                    document.write(xhr.responseText);
-                    document.close();
-                } else {
-                    // 에러 처리
-                    console.error("Error:", xhr.statusText);
-                }
-            }
-        };
-        // 요청 전송
-        xhr.send();
-    }
-</script>
+<div class="container">
+    <h1>Index Page</h1>
+    <center>
+        <h3> 인증 테스트</h3>
+        <h5> [모든 권한 열람 가능한 페이지] </h5>
+        <button onclick="goPage('/index-test-case1')">Test Page 1</button>
+        <button onclick="goPage('/index-test-case2')">Test Page 2</button>
+        <button onclick="goPage('/index-test-case3')">Test Page 3</button>
+    </center>
+</div>
 </body>
 </html>

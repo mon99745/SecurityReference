@@ -13,8 +13,18 @@ public class IndexController {
 		return "index";
 	}
 
-	@GetMapping("/index-test")
-	public String index_test() {
-		return "index-test";
+	@GetMapping("/index-test-case1")
+	public String index_test_case_1() {
+		return "index-test-case1";
+	}
+
+	@GetMapping("/index-test-case2")
+	public String index_test_case_2() {
+		return "index-test-case2";
+	}
+
+	@GetMapping("/index-test-case3")
+	public String index_test_case_3() {
+		return "index-test-case3";
 	}
 }

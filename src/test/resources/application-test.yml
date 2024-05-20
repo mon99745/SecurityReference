@@ -1,0 +1,16 @@
+### 토큰 관리
+jwt:
+  ## 개인 키
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+  ## 토큰 유효 시간
+  access-token-valid-time: 30000 # (defalut: 30초)
+  refresh-token-valid-time: 180000 # (defalut: 3분)
+
+### Spring 관리
+spring:
+  datasource:
+    url: jdbc:h2:file:./db/h2/test/h2db;AUTO_SERVER=true
+
+  ### JPA 관리
+  jpa:
+    hibernate.ddl-auto: create
