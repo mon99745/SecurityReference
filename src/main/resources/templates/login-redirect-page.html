@@ -19,10 +19,12 @@
                     <form id="oauthLoginForm" method="post">
                         <div class="form-group">
                             <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                   placeholder="Enter username">
+                            <input type="hidden" th:value="${username}" id="username" name="username">
+                            <input type="text" class="form-control" th:placeholder="${username}" disabled>
                         </div>
-                        <button type="submit" class="btn btn-primary" onclick="oauthLogin()">해당 계정으로 로그인을 시행하시겠습니까? </button>
+                        <button type="submit" class="btn btn-primary" onclick="oauthLogin()">
+                            해당 계정으로 로그인을 계속하시겠습니까?
+                        </button>
                     </form>
                 </div>
             </div>
