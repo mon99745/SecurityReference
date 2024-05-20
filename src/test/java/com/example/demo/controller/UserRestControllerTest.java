@@ -31,6 +31,7 @@ class UserRestControllerTest {
 	private static final String username = "test_user";
 	private static final String password = "test_1234";
 	private static final String name = "USER";
+	private static final String provider = "";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_USER = "ROLE_USER";
 	private static Map<String, String> fMap = new HashMap<>();
@@ -38,6 +39,7 @@ class UserRestControllerTest {
 			"    \"username\" : \"" + username + "\",\n" +
 			"    \"password\" : \"" + password + "\",\n" +
 			"    \"name\" : \"" + name + "\",\n" +
+			"    \"provider\" : \"" + provider + "\",\n" +
 			"    \"roles\": [\"" + ROLE_USER + "\"]\n" +
 			"}";
 
