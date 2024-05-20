@@ -14,18 +14,18 @@ public enum OAuthAttributes {
 		userProfile.setUsername((String)attribute.get("email"));
 
 		return userProfile;
-	});
+	}),
 
-//	NAVER("naver", (attribute) -> {
-//		UserProfile userProfile = new UserProfile();
-//
-//		Map<String, String> responseValue = (Map)attribute.get("response");
-//
-//		userProfile.setUserName(responseValue.get("name"));
-//		userProfile.setEmail(responseValue.get("email"));
-//
-//		return userProfile;
-//	});
+	NAVER("naver", (attribute) -> {
+		User userProfile = new User();
+
+		Map<String, String> responseValue = (Map)attribute.get("response");
+
+		userProfile.setName(responseValue.get("name"));
+		userProfile.setUsername(responseValue.get("email"));
+
+		return userProfile;
+	});
 
 	private final String registrationId;
 	private final Function<Map<String, Object>, User> of; // 로그인한 사용자의 정보를 통하여 UserProfile을 가져옴

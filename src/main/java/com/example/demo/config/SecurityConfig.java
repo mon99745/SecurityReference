@@ -6,12 +6,13 @@ import com.example.demo.service.OAuth2Service;
 import com.example.demo.service.TokenService;
 import com.example.demo.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,6 +26,9 @@ public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final TokenService tokenService;
 	private final OAuth2Service oAuth2Service;
+
+	@Value("${spring.security.oauth2-enabled}")
+	private final String oauth2Enabled = "false";
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,7 +55,9 @@ public class SecurityConfig {
 				.loginPage("/login-page");
 
 				configureJwt(http);
-				configureOAuth2(http);
+				if (oauth2Enabled == "true") {
+					configureOAuth2(http);
+				}
 
 		return http.build();
 	}
