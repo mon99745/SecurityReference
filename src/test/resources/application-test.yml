@@ -4,7 +4,7 @@ jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   ## 토큰 유효 시간
   access-token-valid-time: 30000 # (defalut: 30초)
-#  refresh-token-valid-time: 86400000 # (defalut: 24시간)
+  refresh-token-valid-time: 180000 # (defalut: 3분)
 
 ### Spring 관리
 spring:

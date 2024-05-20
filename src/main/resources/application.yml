@@ -46,14 +46,14 @@ spring:
       client:
         registration:
           google:
-            client-id:
-            client-secret:
+            client-id: demo
+            client-secret: demo
             scope:
               - email
               - profile
           naver:
-            client-id:
-            client-secret:
+            client-id: demo
+            client-secret: demo
             scope:
               - name
               - email

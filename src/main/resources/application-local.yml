@@ -31,22 +31,24 @@ spring:
     hibernate.ddl-auto: update
 #    show-sql: true
 
-### Security 관리
+  ### Security 관리
   security:
-    ### OAuth2.0 사용여부 (true의 경우 client-id/secret 필수 기입)
-    oauth2-enabled: false # (default: false)
+    ### OAuth2.0 사용여부 (default: false)
+    oauth2-enabled: false
     oauth2:
       client:
-        registration:
-          google:
+#        registration:
+#          google:
 #            client-id:
 #            client-secret:
 #            scope:
 #              - email
 #              - profile
-          naver:
+#          naver:
 #            client-id:
 #            client-secret:
 #            scope:
 #              - name
 #              - email
+
+
