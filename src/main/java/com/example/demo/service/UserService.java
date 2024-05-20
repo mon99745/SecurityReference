@@ -77,15 +77,18 @@ public class UserService {
 	 */
 	@Transactional
 	public User create(User createMsg) {
-		if (createMsg.getProvider().isEmpty() &&
-				userRepository.findByUsername(createMsg.getUsername()).isPresent()) {
+		Optional<User> existingUser = userRepository.findByUsername(createMsg.getUsername());
+
+		if (createMsg.getProvider().isEmpty() && existingUser.isPresent()) {
 			throw new RuntimeException("이미 존재하는 아이디입니다.");
-		} else {
-			String hashPw = bCryptPasswordEncoder.encode(createMsg.getPassword());
-			createMsg.setPassword(hashPw);
-			userRepository.save(createMsg);
-			return createMsg;
+		} else if (!createMsg.getProvider().isEmpty() && existingUser.isPresent()) {
+			createMsg.setId(existingUser.get().getId());
 		}
+
+		String hashPw = bCryptPasswordEncoder.encode(createMsg.getPassword());
+		createMsg.setPassword(hashPw);
+		userRepository.save(createMsg);
+		return createMsg;
 	}
 
 	/**
