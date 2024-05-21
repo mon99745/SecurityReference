@@ -1,17 +1,19 @@
 package com.example.demo.config;
 
 import com.example.demo.domain.User;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
+@RequiredArgsConstructor
 public enum OAuth2Attributes {
 
 	GOOGLE("google", (attribute) -> {
 		User userProfile = new User();
-		userProfile.setName((String)attribute.get("name"));
-		userProfile.setUsername((String)attribute.get("email"));
+		userProfile.setName((String) attribute.get("name"));
+		userProfile.setUsername((String) attribute.get("email"));
 
 		return userProfile;
 	}),
@@ -19,7 +21,7 @@ public enum OAuth2Attributes {
 	NAVER("naver", (attribute) -> {
 		User userProfile = new User();
 
-		Map<String, String> responseValue = (Map)attribute.get("response");
+		Map<String, String> responseValue = (Map) attribute.get("response");
 
 		userProfile.setName(responseValue.get("name"));
 		userProfile.setUsername(responseValue.get("email"));
@@ -28,12 +30,7 @@ public enum OAuth2Attributes {
 	});
 
 	private final String registrationId;
-	private final Function<Map<String, Object>, User> of; // 로그인한 사용자의 정보를 통하여 UserProfile을 가져옴
-
-	OAuth2Attributes(String registrationId, Function<Map<String, Object>, User> of) {
-		this.registrationId = registrationId;
-		this.of = of;
-	}
+	private final Function<Map<String, Object>, User> of;
 
 	public static User extract(String registrationId, Map<String, Object> attributes) {
 		return Arrays.stream(values())
