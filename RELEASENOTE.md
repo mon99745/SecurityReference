@@ -20,7 +20,9 @@
       > 2. Front aspect -> Back aspect - 미진행
   1. (버그/하) UnsupportedJwtException 경우에도 RuntimeException 로 처리되는 이슈 해결 - 미진행
   1. (버그/하) 토큰 상태 변경시 새로운 컬럼으로 추가되는 이슈 해결 - 미진행
-  1. (개선/하) Mapping URL 룰 중에 (`/`) 와 같은 문제의 소지가 있는 코드 수정 - 미진행
+  1. (개선/하) Mapping URL 룰 중에 (`/`) 와 같은 문제의 소지가 있는 코드 수정
+  1. (개선/중) JDK v17 기반의 Spring Boot(v3.2.x)와 Gradle을 최신 버전 업그레이드 - 미진행
+  1. (개선/중) TokenReference를 라이브러리로 사용할 수 있도록 확장 설정 추가 - 미진행
 
 ## v1.2.0 (2024-05-13 ~)
 - 2차 기능 개선
