@@ -8,14 +8,14 @@
 - [v1.0.0](./RELEASENOTE.md#v100-2024-01-30-)
 
 ## Architecture in Project
+### Spring Security - Architecture
+![](src/main/resources/static/img/diagram/SpringSecurityArchitecture.png)
+
 ### Spring Security - Process
 ![](src/main/resources/static/img/diagram/SpringSecurityProcess.png)
 
 ### JWT - Life Cycle
 ![](src/main/resources/static/img/diagram/JwtLifeCycle.png)
-
-### Spring Security - Architecture
-![](src/main/resources/static/img/diagram/SpringSecurityArchitecture.png)
 
 ### OAuth2.0 [간편 회원가입 및 로그인]
 #### 1. 권한 부여 승인 코드 방식
