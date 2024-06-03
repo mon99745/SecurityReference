@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
  */
 @Controller
 public class UserController {
-	@GetMapping("/login-page")
+	@GetMapping("login-page")
 	public String login() {
 		return "login-page";
 	}
@@ -22,7 +22,7 @@ public class UserController {
 		return "login-redirect-page";
 	}
 
-	@GetMapping("/signup")
+	@GetMapping("signup")
 	public String signup() {
 		return "signup";
 	}

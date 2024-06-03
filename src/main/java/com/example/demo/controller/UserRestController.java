@@ -59,7 +59,7 @@ public class UserRestController {
 	 * @param request
 	 * @return
 	 */
-	@PostMapping("/logout")
+	@PostMapping("logout")
 	public boolean logout(HttpServletRequest request) {
 		return userService.logout(request);
 	}

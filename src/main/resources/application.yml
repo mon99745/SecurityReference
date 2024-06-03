@@ -5,6 +5,7 @@ server:
   servlet:
     session:
       persistent: false
+#    context-path:
 
 ### 토큰 관리
 jwt:
