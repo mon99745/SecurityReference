@@ -25,7 +25,7 @@ public class IndexController {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		model.addAttribute("username", userDetails.getUsername());
 		model.addAttribute("role", authentication.getAuthorities());
-		return "index-test-case1";
+		return "index-test-page1";
 	}
 
 	@GetMapping("index-test-case2")
@@ -35,7 +35,7 @@ public class IndexController {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		model.addAttribute("username", userDetails.getUsername());
 		model.addAttribute("role", authentication.getAuthorities());
-		return "index-test-case2";
+		return "index-test-page2";
 	}
 
 	@GetMapping("index-test-case3")
@@ -45,6 +45,6 @@ public class IndexController {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		model.addAttribute("username", userDetails.getUsername());
 		model.addAttribute("role", authentication.getAuthorities());
-		return "index-test-case3";
+		return "index-test-page3";
 	}
 }

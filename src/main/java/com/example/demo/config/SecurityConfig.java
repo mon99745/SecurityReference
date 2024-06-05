@@ -60,7 +60,7 @@ public class SecurityConfig {
 
 				.and()
 				.formLogin().permitAll()
-				.loginPage("/login-page");
+				.loginPage("/login");
 
 		configureJwt(http);
 		if (oauth2Enabled) {
@@ -79,8 +79,8 @@ public class SecurityConfig {
 	private void configureOAuth2(HttpSecurity http) throws Exception {
 		http
 				.oauth2Login()
-				.loginPage("/login-page")
-				.defaultSuccessUrl("/login-redirect-page", true)
+				.loginPage("/login")
+				.defaultSuccessUrl("/login-reconfirm", true)
 				.userInfoEndpoint()
 				.userService(oAuth2Service);
 	}

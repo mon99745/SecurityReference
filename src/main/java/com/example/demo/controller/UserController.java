@@ -11,19 +11,19 @@ import javax.servlet.http.HttpSession;
  */
 @Controller
 public class UserController {
-	@GetMapping("login-page")
+	@GetMapping("login")
 	public String login() {
 		return "login-page";
 	}
 
-	@GetMapping("login-redirect-page")
+	@GetMapping("login-reconfirm")
 	public String login(Model model, HttpSession session) {
 		model.addAttribute("username", session.getAttribute("username"));
-		return "login-redirect-page";
+		return "login-reconfirm-page";
 	}
 
 	@GetMapping("signup")
 	public String signup() {
-		return "signup";
+		return "signup-page";
 	}
 }
