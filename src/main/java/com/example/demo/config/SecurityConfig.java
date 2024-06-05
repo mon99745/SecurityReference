@@ -30,42 +30,52 @@ public class SecurityConfig {
 	@Value("${spring.security.oauth2-enabled:false}")
 	private boolean oauth2Enabled;
 
+	private static final String[] PERMIT_URL = {
+			"/",
+			"/signup",
+			"/error/**",
+			"/test/**",
+			"/css/**",
+			"/img/**",
+			"/js/**",
+			"/user/**",
+			"/h2-console/**"
+	};
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 				.httpBasic().disable()
-				.csrf().disable() // CSRF 보안 비활성화
-				.headers().frameOptions().disable() // X-Frame-Options 비활성화
+				.csrf().disable()
+				.headers().frameOptions().disable()
 
 				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
 				.and()
 				.authorizeRequests()
-				.antMatchers(
-						"/", "/signup", "/error",
-						"/css/**", "/img/**", "/js/**", "/user/**", "/test/**",
-						"/h2-console/**", "/login-*")
-				.permitAll()
+				.antMatchers(PERMIT_URL).permitAll()
 				.antMatchers("/index-test-case*").authenticated()
 				.anyRequest().authenticated()
 
 				.and()
-				.formLogin()
+				.formLogin().permitAll()
 				.loginPage("/login-page");
 
-				configureJwt(http);
-				if (oauth2Enabled) {
-					configureOAuth2(http);
-				}
+		configureJwt(http);
+		if (oauth2Enabled) {
+			configureOAuth2(http);
+		}
 
 		return http.build();
 	}
+
 	private void configureJwt(HttpSecurity http) {
 		http
 				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenService),
 						UsernamePasswordAuthenticationFilter.class);
 	}
+
 	private void configureOAuth2(HttpSecurity http) throws Exception {
 		http
 				.oauth2Login()
