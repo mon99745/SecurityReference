@@ -8,6 +8,7 @@ import com.example.demo.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,10 +35,6 @@ public class SecurityConfig {
 			"/",
 			"/signup",
 			"/error/**",
-			"/test/**",
-			"/css/**",
-			"/img/**",
-			"/js/**",
 			"/user/**",
 			"/h2-console/**"
 	};
@@ -55,7 +52,10 @@ public class SecurityConfig {
 				.and()
 				.authorizeRequests()
 				.antMatchers(PERMIT_URL).permitAll()
-				.antMatchers("/index-test-case*").authenticated()
+				.antMatchers("/index-test-case1").authenticated()
+				.antMatchers("/index-test-case2").hasRole("USER")
+				.antMatchers("/index-test-case3").hasRole("ADMIN")
+				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 				.anyRequest().authenticated()
 
 				.and()
