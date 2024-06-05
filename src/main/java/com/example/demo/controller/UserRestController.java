@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping(UserRestController.PATH)
 public class UserRestController {
-	public static final String PATH = "/user";
+	public static final String PATH = "/auth/api/user";
 	private final UserService userService;
 
 	/**

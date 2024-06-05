@@ -33,9 +33,8 @@ public class SecurityConfig {
 
 	private static final String[] PERMIT_URL = {
 			"/",
-			"/signup",
+			"/auth/**",
 			"/error/**",
-			"/user/**",
 			"/h2-console/**"
 	};
 
@@ -59,8 +58,8 @@ public class SecurityConfig {
 				.anyRequest().authenticated()
 
 				.and()
-				.formLogin().permitAll()
-				.loginPage("/login");
+				.formLogin()
+				.loginPage("/auth/login");
 
 		configureJwt(http);
 		if (oauth2Enabled) {
@@ -79,8 +78,8 @@ public class SecurityConfig {
 	private void configureOAuth2(HttpSecurity http) throws Exception {
 		http
 				.oauth2Login()
-				.loginPage("/login")
-				.defaultSuccessUrl("/login-reconfirm", true)
+				.loginPage("/auth/login")
+				.defaultSuccessUrl("/auth/login-reconfirm", true)
 				.userInfoEndpoint()
 				.userService(oAuth2Service);
 	}

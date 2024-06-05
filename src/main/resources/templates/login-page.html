@@ -28,13 +28,14 @@
                                    placeholder="Password">
                         </div>
                         <button type="submit" class="btn btn-primary" onclick="login()">Login</button>
-                        <a th:href="@{/signup}" class="btn btn-primary">Sign Up</a>
+                        <a th:href="@{/auth/signup}" class="btn btn-primary">Sign Up</a>
                         <br><br>
                     </form>
                     <a href="/oauth2/authorization/google" class="btn btn-white active" role="button">
-                        <img th:src="@{images/logo/google_logo.png}" style="height: 20px; margin: 3px"> Google Login</a>
+                        <img th:src="@{../images/logo/google_logo.png}" style="height: 20px; margin: 3px"> Google Login</a>
                     <a href="/oauth2/authorization/naver" class="btn btn-white active" role="button">
-                        <img th:src="@{images/logo/naver_logo.png}" style="height:20px; margin: 3px; "> Naver Login</a><br>
+                        <img th:src="@{../images/logo/naver_logo.png}" style="height:20px; margin: 3px; "> Naver Login</a>
+                    <br>
                 </div>
             </div>
         </div>

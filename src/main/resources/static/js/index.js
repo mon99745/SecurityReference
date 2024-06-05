@@ -6,7 +6,7 @@ function getToken() {
     // JWT 토큰 값이 없다면 경고를 표시하고 로그인 페이지로 이동
     if (!accessToken || !refreshToken) {
         console.log("JWT 토큰이 존재하지 않습니다.");
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
         return;
     } else {
         return {
@@ -56,25 +56,25 @@ function goPage(url) {
 function login() {
     document.getElementById("loginForm")
         .addEventListener("submit", function (event) {
-        event.preventDefault(); // 기본 동작 방지
+            event.preventDefault(); // 기본 동작 방지
 
-        var formData = new FormData(this);
+            var formData = new FormData(this);
 
-        fetch("/user/login", {
-            method: "POST",
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("refreshToken", data.refreshToken);
-
-                window.location.href = "/";
+            fetch("/auth/api/user/login", {
+                method: "POST",
+                body: formData
             })
-            .catch(error => {
-                console.error("Error:", error);
-            });
-    });
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem("accessToken", data.accessToken);
+                    localStorage.setItem("refreshToken", data.refreshToken);
+
+                    window.location.href = "/";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        });
 }
 
 function oauthLogin() {
@@ -84,7 +84,7 @@ function oauthLogin() {
 
             var formData = new FormData(this);
 
-            fetch("/user/oauthLogin", {
+            fetch("/auth/api/user/oauthLogin", {
                 method: "POST",
                 body: formData
             })
@@ -107,7 +107,7 @@ function logout() {
     var accessToken = tokens.accessToken;
     var refreshToken = tokens.refreshToken;
 
-    fetch("/user/logout", {
+    fetch("/auth/api/user/logout", {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + accessToken,
@@ -118,7 +118,7 @@ function logout() {
             if (response.ok) {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
-                window.location.href = "/login-page";
+                window.location.href = "/auth/login";
             } else {
                 throw new Error("Network response was not ok.");
             }
@@ -138,7 +138,7 @@ function signUp() {
         roles: [document.getElementById("roles").value]
     };
 
-    fetch("/user/create", {
+    fetch("/auth/api/user/create", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -165,7 +165,7 @@ function withdraw() {
     var accessToken = tokens.accessToken;
     var refreshToken = tokens.refreshToken;
 
-    fetch("/user/withdraw", {
+    fetch("/auth/api/user/withdraw", {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + accessToken,
@@ -176,7 +176,7 @@ function withdraw() {
             if (response.ok) {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
-                window.location.href = "/login-page";
+                window.location.href = "/auth/login";
             } else {
                 throw new Error("Network response was not ok.");
             }

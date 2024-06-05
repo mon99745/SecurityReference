@@ -28,6 +28,6 @@ public class TokenValidationExceptionHandler {
 			redirectAttributes.addFlashAttribute("error", "unknown-error");
 		}
 
-		return "redirect:/login-page";
+		return "redirect:/auth/login-page";
 	}
 }
