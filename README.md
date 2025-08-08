@@ -19,10 +19,8 @@
 
 ### OAuth2.0 [간편 회원가입 및 로그인]
 #### 1. 권한 부여 승인 코드 방식
-![](src/main/resources/static/img/diagram/OAuth2.0Process.png)
+<img width="1383" height="774" alt="image" src="https://github.com/user-attachments/assets/54147121-aec3-4954-8d93-6977855267cc" />
 
-#### 2. OAuth2.0 내부 프로세스
-![](src/main/resources/static/img/diagram/oauth2.0Process(Internal).png)
 
 #### 3. OAuth2.0 Client-id/secret 발급 주소
 - **Google:** https://console.cloud.google.com/apis/credentials
