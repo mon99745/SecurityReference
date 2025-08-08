@@ -40,6 +40,9 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		/**
+		 * 인가 설정
+		 */
 		http
 				.httpBasic().disable()
 				.csrf().disable()
@@ -55,13 +58,21 @@ public class SecurityConfig {
 				.antMatchers("/index-test-case2").hasRole("USER")
 				.antMatchers("/index-test-case3").hasRole("ADMIN")
 				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-				.anyRequest().authenticated()
-
-				.and()
+				.anyRequest().authenticated();
+		/**
+		 * 인증 설정
+		 */
+		http
 				.formLogin()
-				.loginPage("/auth/login");
+				.loginPage("/auth/login")
+				.defaultSuccessUrl("/")
+				.failureUrl("/auth/login")
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.permitAll();
 
 		configureJwt(http);
+
 		if (oauth2Enabled) {
 			configureOAuth2(http);
 		}
