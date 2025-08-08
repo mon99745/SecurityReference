@@ -43,3 +43,6 @@ out/
 
 ### PPTX ###
 ~$*
+
+### app ###
+/src/main/resources/*-local.yml
